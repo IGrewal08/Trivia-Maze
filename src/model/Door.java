@@ -5,7 +5,7 @@ import java.io.Serializable;
  * Represents a door connecting two adjacent rooms in the Trivia Maze to allow the player traversal.
  *
  * Each door is assigned a single question upon maze generation, initially the door begins in a lock state
- * Once a correct question has been answered, it is permanently unlocked, while a incorrect answer leads the door
+ * once a correct question has been answered, it is permanently unlocked, while a incorrect answer leads the door
  * being permanently blocked for the rest of the game.
  * 
  * @author Inderdeep Grewal
