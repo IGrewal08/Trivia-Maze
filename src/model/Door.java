@@ -109,6 +109,7 @@ public class Door implements Serializable {
      * @return the current state of this door (locked, open, answered, question)
      */
     public String toString() {
-        return String.format("Door [locked=%b, open=%b, answered=%b]", myLocked, myOpened, myAnswered);
+        return String.format("Door [locked=%b, open=%b, answered=%b]", 
+            myLocked, myOpened, myAnswered);
     }
 }
