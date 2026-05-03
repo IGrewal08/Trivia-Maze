@@ -81,6 +81,7 @@ public class Door implements Serializable {
     public void unlock() {
         this.myOpened = true;
         this.myLocked = false;
+        this.myAnswered = true;
     }
 
     /**
@@ -100,5 +101,14 @@ public class Door implements Serializable {
      */
     public boolean attemptUnlock(String theAnswer) {
         return myQuestion.checkAnswer(theAnswer);
+    }
+
+    /**
+     * Returns string representation of this door's current state.
+     * 
+     * @return the current state of this door (locked, open, answered, question)
+     */
+    public String toString() {
+        return String.format("Door [locked=%b, open=%b, answered=%b]", myLocked, myOpened, myAnswered);
     }
 }
