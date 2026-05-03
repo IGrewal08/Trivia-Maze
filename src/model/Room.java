@@ -31,7 +31,7 @@ public class Room implements Serializable {
      * @param theX X coordinate location on the 2D trivia maze
      * @param theY Y coordinate location on the 2D trivia maze
      */
-    public Room(int theX, int theY) {
+    public Room(final int theX, final int theY) {
         if (theX < 0 || theY < 0) {
             throw new IllegalArgumentException("X and Y coordinates must be positive integers.");
         }
@@ -46,7 +46,7 @@ public class Room implements Serializable {
      * @param theDir the direction the player is looking at
      * @return the door in the direction the player is looking at
      */
-    public Door getDoor(Direction theDir) {
+    public Door getDoor(final Direction theDir) {
         if (theDir == null) {
             throw new IllegalArgumentException("Direction must not be null.");
         }
@@ -59,7 +59,7 @@ public class Room implements Serializable {
      * @param theDir the direction being checked
      * @return {@code true} if there is a door in that direction, {@code false} otherwise
      */
-    public boolean hasDoor(Direction theDir) {
+    public boolean hasDoor(final Direction theDir) {
         if (theDir == null) {
             throw new IllegalArgumentException("Direction must not be null");
         }
@@ -98,7 +98,7 @@ public class Room implements Serializable {
      * 
      * @param theVisited the value indicating if this room is marked visited
      */
-    public void setVisited(boolean theVisited) {
+    public void setVisited(final boolean theVisited) {
         this.myIsVisited = theVisited;
     }
 
@@ -108,7 +108,7 @@ public class Room implements Serializable {
      * @param theDir the given direction to build a door
      * @param theDoor the door being place within this room
      */
-    protected void addDoor(Direction theDir, Door theDoor) {
+    protected void addDoor(final Direction theDir, final Door theDoor) {
         if (theDir == null || theDoor == null) {
             throw new IllegalArgumentException("Direction or Door must not be null.");
         }

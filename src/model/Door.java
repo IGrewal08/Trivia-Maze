@@ -30,7 +30,7 @@ public class Door implements Serializable {
      * @param theQuestion the trivia question assigned to this door
      * @throws IllegalArgumentException if thQuestion is null
      */
-    public Door(Question theQuestion) {
+    public Door(final Question theQuestion) {
         if (theQuestion == null) {
             throw new IllegalArgumentException("Door question must not be null.");
         }
@@ -99,7 +99,7 @@ public class Door implements Serializable {
      * @param theAnswer the player's answer
      * @return {@code true} if the answer is correct, {@code false} otherwise
      */
-    public boolean attemptUnlock(String theAnswer) {
+    public boolean attemptUnlock(final String theAnswer) {
         return myQuestion.checkAnswer(theAnswer);
     }
 
