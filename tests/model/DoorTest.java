@@ -1,7 +1,4 @@
-package tests.model;
-
-import model.Door;
-import model.Question;
+package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,22 +10,26 @@ import org.junit.jupiter.api.Test;
  * 
  * All tests are written as methods and grouped my method concerns from Door.
  * Inner TestQuestion class is implemented to keep modularity and promote loose coupling. 
+ * 
+ * Run in shell for tests:
+ *   java -jar lib/junit-platform-console-standalone-1.11.4.jar \ --class-path bin \ --scan-class-path
  */
 class DoorTest {
 
     // Inner Question class
-    private static class TestQuestion implements Question {
+    private static class TestQuestion extends Question {
         static final String CORRECT = "correct";
         static final String WRONG = "wrong";
 
         @Override
-        public String getQuestion() {
-            return "question?";
+        public boolean checkAnswer(final String theAnswer) {
+            return CORRECT.equals(theAnswer);
         }
 
         @Override
-        public boolean checkAnswer(final String theAnswer) {
-            return CORRECT.equals(theAnswer);
+        public QuestionType getQuestionType() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getQuestionType'");
         }
     }
 
@@ -76,13 +77,13 @@ class DoorTest {
     // ~~~ unlock tests ~~~
     @Test
     void testAttemptUnlockCorrectAnswer() {
-        assertTrue(myDoor.attemptUnlock(testQuestion.CORRECT),
+        assertTrue(myDoor.attemptUnlock(TestQuestion.CORRECT),
             "attemptUnlock() should return true for the correct answer.");
     }
 
     @Test
     void testUnlockOpensDoor() {
-        myDoor.attemptUnlock(testQuestion.CORRECT);
+        myDoor.attemptUnlock(TestQuestion.CORRECT);
         myDoor.unlock();
         assertTrue(myDoor.isOpen(),
             "Door should be open after being unlocked.");
@@ -106,7 +107,7 @@ class DoorTest {
 
     @Test
     void testAttemptUnlockWrongAnswer() {
-        assertFalse(myDoor.attemptUnlock(testQuestion.WRONG),
+        assertFalse(myDoor.attemptUnlock(TestQuestion.WRONG),
             "attemptUnlock() should return false for the wrong answer.");
     }
 
