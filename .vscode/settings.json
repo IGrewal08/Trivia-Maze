@@ -5,5 +5,9 @@
     ],
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
-    ]
+    ],
+    "java.test.config": {
+        "name": "DoorTest",
+        "workingDirectory": "${workspaceFolder}"
+    }
 }

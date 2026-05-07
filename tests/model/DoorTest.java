@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test;
  * Inner TestQuestion class is implemented to keep modularity and promote loose coupling. 
  * 
  * Run in shell for tests:
- *   java -jar lib/junit-platform-console-standalone-1.11.4.jar \ --class-path bin \ --scan-class-path
+ *   java -jar lib/junit-platform-console-standalone-1.11.4.jar \ 
+ *      --class-path bin \ 
+ *      --scan-class-path
  */
 class DoorTest {
 
@@ -20,10 +22,15 @@ class DoorTest {
     private static class TestQuestion extends Question {
         static final String CORRECT = "correct";
         static final String WRONG = "wrong";
+        
+        public TestQuestion() {
+            super();
+        }
 
         @Override
-        public boolean checkAnswer(final String theAnswer) {
-            return CORRECT.equals(theAnswer);
+        public boolean checkAnswer(String theAnswer) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'checkAnswer'");
         }
 
         @Override

@@ -13,6 +13,9 @@ import java.io.Serializable;
  */
 public class Door implements Serializable {
 
+    /** serialization Unique ID for version control. */
+    private static final long serialVersionUID = 1L;
+
     /** Locked state of this door, requires correct answer to pass. */
     private boolean myLocked;
     /** Open state of this door, when unlocked the player can pass this room. */

@@ -13,6 +13,9 @@ import java.util.Map;
  * @version 1.0
  */
 public class Room implements Serializable {
+
+    /** serialization Unique ID for version control. */
+    private static final long serialVersionUID = 1L;
     
     /** X coordinate of this room within the Trivia Maze. */
     private int myX;

@@ -7,6 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomTest {
 
+    // Inner Room Class
+    private static class TestRoom extends Room {
+
+        public TestRoom(int theX, int theY) {
+            super(theX, theY);
+        }
+        
+    }
     private Room room;
 
     @BeforeEach
