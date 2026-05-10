@@ -8,46 +8,101 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * JUnit 5 tests for {@link MultipleChoiceQuestion}. Covers construction
+ * validation (null/blank answer, answer-not-in-options, too-few-options),
+ * case-insensitive trimmed answer matching, SKIP semantics, and the
+ * defensive-copy behavior of {@link MultipleChoiceQuestion#getOptions()}.
+ *
+ * @author Anwar Noor
+ * @version 1.0
+ */
 public class MultipleChoiceQuestionTest {
 
-    private MultipleChoiceQuestion question;
+    private MultipleChoiceQuestion myQuestion;
 
     @BeforeEach
     void setUp() {
-        List<String> options = Arrays.asList("A", "B", "C", "D");
-        question = new MultipleChoiceQuestion(
-                "q1",
-                "What is the correct answer?",
-                1,
-                options,
-                "A"
+        myQuestion = new MultipleChoiceQuestion(
+            1,
+            "Pick a primary color.",
+            2,
+            "red",
+            Arrays.asList("red", "blue", "green", "yellow")
         );
     }
 
     @Test
+    void testConstructorValid() {
+        assertEquals(1, myQuestion.getId());
+        assertEquals("Pick a primary color.", myQuestion.getQuestionText());
+        assertEquals(2, myQuestion.getDifficulty());
+        assertEquals(QuestionType.MULTIPLE_CHOICE, myQuestion.getQuestionType());
+        assertEquals(4, myQuestion.getOptions().size());
+    }
+
+    @Test
+    void testConstructorRejectsNullAnswer() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new MultipleChoiceQuestion(2, "Q?", 1, null,
+                Arrays.asList("a", "b")));
+    }
+
+    @Test
+    void testConstructorRejectsAnswerNotInOptions() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new MultipleChoiceQuestion(3, "Q?", 1, "missing",
+                Arrays.asList("a", "b")));
+    }
+
+    @Test
+    void testConstructorRejectsTooFewOptions() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new MultipleChoiceQuestion(4, "Q?", 1, "a",
+                Arrays.asList("a")));
+    }
+
+    @Test
     void testCheckAnswerCorrect() {
-        // TODO: verify correct answer returns true
-        // assertTrue(question.checkAnswer("A"));
+        assertTrue(myQuestion.checkAnswer("red"));
+    }
+
+    @Test
+    void testCheckAnswerCaseInsensitive() {
+        assertTrue(myQuestion.checkAnswer("RED"));
+        assertTrue(myQuestion.checkAnswer("Red"));
+    }
+
+    @Test
+    void testCheckAnswerWithWhitespace() {
+        assertTrue(myQuestion.checkAnswer("  red  "));
     }
 
     @Test
     void testCheckAnswerIncorrect() {
-        // TODO: verify incorrect answer returns false
-        // assertFalse(question.checkAnswer("B"));
+        assertFalse(myQuestion.checkAnswer("blue"));
     }
 
     @Test
-    void testCheckAnswerCaseSensitivity() {
-        // TODO: determine if MC should be case-sensitive
+    void testCheckAnswerNullReturnsFalse() {
+        assertFalse(myQuestion.checkAnswer(null));
     }
 
     @Test
-    void testCheckAnswerInvalidOption() {
-        // TODO: handle answers not in options list
+    void testCheckAnswerSkipReturnsTrue() {
+        assertTrue(myQuestion.checkAnswer(Question.SKIP));
     }
 
     @Test
-    void testCheckAnswerNullInput() {
-        // TODO: verify behavior for null input
+    void testGetQuestionType() {
+        assertEquals(QuestionType.MULTIPLE_CHOICE, myQuestion.getQuestionType());
+    }
+
+    @Test
+    void testGetOptionsIsDefensiveCopy() {
+        final List<String> returned = myQuestion.getOptions();
+        assertThrows(UnsupportedOperationException.class,
+            () -> returned.add("purple"));
+        assertEquals(4, myQuestion.getOptions().size());
     }
 }
