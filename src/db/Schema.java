@@ -21,7 +21,7 @@ import java.sql.Statement;
 public class Schema {
     
     /* connection string to connect to SQLite db with jdbc */
-    private static final String CONNECTION_URL = "jdbc:sqlite:resources/trivia.db";
+    private static final transient String CONNECTION_URL = "jdbc:sqlite:resources/trivia.db";
 
     /**
      * Main method to build and seed the database with 63 trivia questions to map to each door.
