@@ -30,7 +30,7 @@ public class GameController {
      * @param theState the model for the trivia maze holds all data
      * @param theView the view for the trivia maze holds java swing
      */
-    public gameController(final GameState theState, final GameView theView) {
+    public GameController(final GameState theState, final GameView theView) {
         if (theState == null || theView == null) {
             throw new IllegalArgumentException("GameState or GameView must not be null.");
         }

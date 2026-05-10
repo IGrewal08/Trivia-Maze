@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# SQLite database files
+*.db
+
 # Log file
 *.log
 

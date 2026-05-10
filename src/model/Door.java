@@ -1,52 +1,61 @@
 package model;
+
 import java.io.Serializable;
 
 /**
- * Represents a door connecting two adjacent rooms in the Trivia Maze to allow the player traversal.
+ * Represents a door connecting two adjacent rooms in the Trivia Maze
+ * to allow player traversal.
  *
- * Each door is assigned a single question upon maze generation, initially the door begins in a lock state
- * once a correct question has been answered, it is permanently unlocked, while a incorrect answer leads the door
- * being permanently blocked for the rest of the game.
- * 
+ * Each door is assigned a single trivia question upon maze generation.
+ * Initially the door begins in a locked state. Once a correct question
+ * has been answered, it is permanently unlocked. An incorrect answer
+ * permanently blocks the door for the remainder of the game.
+ *
  * @author Inderdeep Grewal
  * @version 1.0
  */
 public class Door implements Serializable {
 
-    /** serialization Unique ID for version control. */
-    private static final long serialVersionUID = 1L;
-
     /** Locked state of this door, requires correct answer to pass. */
     private boolean myLocked;
-    /** Open state of this door, when unlocked the player can pass this room. */
+
+    /** Open state of this door, allowing traversal. */
     private boolean myOpened;
-    /** Whether this door's question has been answered (either correct or incorrect). */
+
+    /** Permanently blocked state after incorrect answer. */
+    private boolean myBlocked;
+
+    /** Whether this door's question has been answered. */
     private boolean myAnswered;
-    /** The trivia question that must be answered correctly to unlock this door. */
+
+    /** Trivia question assigned to this door. */
     private Question myQuestion;
 
     /**
-     * Construct a Door with the given trivia question, with its initial state as locked.
-     * 
-     * The provided question is assigned once and is permanent, and cannot be changed after construction.
-     * 
+     * Constructs a Door with the given trivia question.
+     *
      * @param theQuestion the trivia question assigned to this door
-     * @throws IllegalArgumentException if thQuestion is null
+     * @throws IllegalArgumentException if theQuestion is null
      */
     public Door(final Question theQuestion) {
+
         if (theQuestion == null) {
-            throw new IllegalArgumentException("Door question must not be null.");
+            throw new IllegalArgumentException(
+                    "Door question must not be null.");
         }
-        this.myLocked = true;
-        this.myOpened = false;
-        this.myAnswered = false;
-        this.myQuestion = theQuestion;
+
+        myLocked = true;
+        myOpened = false;
+        myBlocked = false;
+        myAnswered = false;
+
+        myQuestion = theQuestion;
     }
 
     /**
-     * Returns whether this door's question has been answered.
-     * 
-     * @return {@code true} when an answer has been submitted for this door
+     * Returns whether this door has been answered.
+     *
+     * @return true if answered
      */
     public boolean getDoorState() {
         return myAnswered;
@@ -54,65 +63,92 @@ public class Door implements Serializable {
 
     /**
      * Returns whether this door is currently locked.
-     * 
-     * @return {@code true} when this door is locked
+     *
+     * @return true if locked
      */
     public boolean isLocked() {
         return myLocked;
     }
 
     /**
-     * Returns whether this door is open and passable.
-     * 
-     * @return {@code true} when this door has been unlocked successfully
+     * Returns whether this door is currently open.
+     *
+     * @return true if open
      */
     public boolean isOpen() {
         return myOpened;
     }
 
     /**
-     * Locks this door, preventing further passage.
+     * Returns whether this door is permanently blocked.
+     *
+     * @return true if blocked
      */
-    public void lock() {
-        this.myLocked = true;
-        this.myOpened = false;
+    public boolean isBlocked() {
+        return myBlocked;
     }
 
     /**
-     * Permanently unlocks this door, allowing further passage.
+     * Locks this door.
+     */
+    public void lock() {
+        myLocked = true;
+        myOpened = false;
+        myBlocked = false;
+    }
+
+    /**
+     * Unlocks this door permanently.
      */
     public void unlock() {
-        this.myOpened = true;
-        this.myLocked = false;
-        this.myAnswered = true;
+        myOpened = true;
+        myLocked = false;
+        myBlocked = false;
+        myAnswered = true;
+    }
+
+    /**
+     * Permanently blocks this door.
+     */
+    public void block() {
+        myBlocked = true;
+        myLocked = false;
+        myOpened = false;
+        myAnswered = true;
     }
 
     /**
      * Returns the trivia question assigned to this door.
-     * 
-     * @return the question assigned to this door
+     *
+     * @return assigned trivia question
      */
     public Question getQuestion() {
         return myQuestion;
     }
 
     /**
-     * Attempts to unlock this door by checking the player's answer to actual answer.
-     * 
-     * @param theAnswer the player's answer
-     * @return {@code true} if the answer is correct, {@code false} otherwise
+     * Attempts to unlock this door using the provided answer.
+     *
+     * @param theAnswer player's answer
+     * @return true if answer is correct
      */
     public boolean attemptUnlock(final String theAnswer) {
         return myQuestion.checkAnswer(theAnswer);
     }
 
     /**
-     * Returns string representation of this door's current state.
-     * 
-     * @return the current state of this door (locked, open, answered, question)
+     * Returns string representation of this door.
+     *
+     * @return formatted door state string
      */
+    @Override
     public String toString() {
-        return String.format("Door [locked=%b, open=%b, answered=%b]", 
-            myLocked, myOpened, myAnswered);
+
+        return String.format(
+                "Door [locked=%b, open=%b, blocked=%b, answered=%b]",
+                myLocked,
+                myOpened,
+                myBlocked,
+                myAnswered);
     }
 }

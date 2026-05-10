@@ -52,7 +52,7 @@ public class Schema {
                                             'SPORTS',
                                             'TECHNOLOGY',
                                             'ENTERTAINMENT',
-                                            'MATH',
+                                            'MATH'
                                         )),
                         difficulty      TEXT        NOT NULL CHECK(difficulty IN (
                                             'EASY',
