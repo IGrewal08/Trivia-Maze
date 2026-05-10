@@ -5,42 +5,76 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * JUnit 5 tests for {@link ShortAnswerQuestion}. Covers construction
+ * validation (null and blank/whitespace-only answers are rejected),
+ * case-insensitive trimmed answer matching, and SKIP semantics.
+ *
+ * @author Anwar Noor
+ * @version 1.0
+ */
 public class ShortAnswerQuestionTest {
 
-    private ShortAnswerQuestion question;
+    private ShortAnswerQuestion myQuestion;
 
     @BeforeEach
     void setUp() {
-        question = new ShortAnswerQuestion(
-                "q3",
-                "Name a primary color.",
-                1,
-                "red"
-        );
+        myQuestion = new ShortAnswerQuestion(1, "Name a primary color.", 1, "red");
     }
 
     @Test
-    void testCheckAnswerExactMatch() {
-        // TODO: assertTrue(question.checkAnswer("red"));
+    void testConstructorValid() {
+        assertEquals(1, myQuestion.getId());
+        assertEquals("Name a primary color.", myQuestion.getQuestionText());
+        assertEquals(1, myQuestion.getDifficulty());
+        assertEquals(QuestionType.SHORT_ANSWER, myQuestion.getQuestionType());
+    }
+
+    @Test
+    void testConstructorRejectsNullAnswer() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new ShortAnswerQuestion(2, "Q?", 1, null));
+    }
+
+    @Test
+    void testConstructorRejectsBlankAnswer() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new ShortAnswerQuestion(3, "Q?", 1, "   "));
+    }
+
+    @Test
+    void testCheckAnswerCorrect() {
+        assertTrue(myQuestion.checkAnswer("red"));
     }
 
     @Test
     void testCheckAnswerCaseInsensitive() {
-        // TODO: assertTrue(question.checkAnswer("RED"));
+        assertTrue(myQuestion.checkAnswer("RED"));
+        assertTrue(myQuestion.checkAnswer("Red"));
     }
 
     @Test
-    void testCheckAnswerTrimWhitespace() {
-        // TODO: assertTrue(question.checkAnswer(" red "));
+    void testCheckAnswerWithWhitespace() {
+        assertTrue(myQuestion.checkAnswer("  red  "));
     }
 
     @Test
     void testCheckAnswerIncorrect() {
-        // TODO: assertFalse(question.checkAnswer("blue"));
+        assertFalse(myQuestion.checkAnswer("blue"));
     }
 
     @Test
-    void testCheckAnswerNullInput() {
-        // TODO: null handling
+    void testCheckAnswerNullReturnsFalse() {
+        assertFalse(myQuestion.checkAnswer(null));
+    }
+
+    @Test
+    void testCheckAnswerSkipReturnsTrue() {
+        assertTrue(myQuestion.checkAnswer(Question.SKIP));
+    }
+
+    @Test
+    void testGetQuestionType() {
+        assertEquals(QuestionType.SHORT_ANSWER, myQuestion.getQuestionType());
     }
 }
