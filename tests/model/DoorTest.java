@@ -1,5 +1,7 @@
 package model;
 
+import model.Door;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,42 +11,27 @@ import org.junit.jupiter.api.Test;
  * JUnit 5 testing for Door
  * 
  * All tests are written as methods and grouped my method concerns from Door.
- * Inner TestQuestion class is implemented to keep modularity and promote loose coupling. 
+ * Inner TestQuestion class is implemented to keep modularity and promote loose coupling.
  * 
- * Run in shell for tests:
- *   java -jar lib/junit-platform-console-standalone-1.11.4.jar \ 
- *      --class-path bin \ 
- *      --scan-class-path
+ * @author Inderdeep Grewal & Nicolas Cortes
+ * @version 1.0 
  */
 class DoorTest {
 
-    // Inner Question class
-    private static class TestQuestion extends Question {
-        static final String CORRECT = "correct";
-        static final String WRONG = "wrong";
-        
-        public TestQuestion() {
-            super();
-        }
-
-        @Override
-        public boolean checkAnswer(String theAnswer) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'checkAnswer'");
-        }
-
-        @Override
-        public QuestionType getQuestionType() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getQuestionType'");
-        }
-    }
-
-    private TestQuestion testQuestion;
+    private Question testQuestion;
     private Door myDoor;
     @BeforeEach
     void setUp() {
-        testQuestion = new TestQuestion();
+        testQuestion = new Question() {
+            @Override
+            public boolean checkAnswer(final String theAnswer) {
+                if (theAnswer.equals("CORRECT")) return true;
+                return false;
+            }
+
+            @Override
+            public QuestionType getQuestionType() { return null; }
+        };
         myDoor = new Door(testQuestion);
     }
 
@@ -84,13 +71,13 @@ class DoorTest {
     // ~~~ unlock tests ~~~
     @Test
     void testAttemptUnlockCorrectAnswer() {
-        assertTrue(myDoor.attemptUnlock(TestQuestion.CORRECT),
+        assertTrue(myDoor.attemptUnlock("CORRECT"),
             "attemptUnlock() should return true for the correct answer.");
     }
 
     @Test
     void testUnlockOpensDoor() {
-        myDoor.attemptUnlock(TestQuestion.CORRECT);
+        myDoor.attemptUnlock("CORRECT");
         myDoor.unlock();
         assertTrue(myDoor.isOpen(),
             "Door should be open after being unlocked.");
@@ -114,7 +101,7 @@ class DoorTest {
 
     @Test
     void testAttemptUnlockWrongAnswer() {
-        assertFalse(myDoor.attemptUnlock(TestQuestion.WRONG),
+        assertFalse(myDoor.attemptUnlock("INCORRECT"),
             "attemptUnlock() should return false for the wrong answer.");
     }
 
