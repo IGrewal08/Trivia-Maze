@@ -1,7 +1,5 @@
 package model;
 
-import model.Door;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +11,8 @@ import org.junit.jupiter.api.Test;
  * All tests are written as methods and grouped my method concerns from Door.
  * Inner TestQuestion class is implemented to keep modularity and promote loose coupling.
  * 
- * @author Inderdeep Grewal & Nicolas Cortes
+ * @author Inderdeep Grewal
+ * @author Nicolas Cortes
  * @version 1.0 
  */
 class DoorTest {
@@ -22,7 +21,7 @@ class DoorTest {
     private Door myDoor;
     @BeforeEach
     void setUp() {
-        testQuestion = new Question() {
+        testQuestion = new Question(0, null, 0) {
             @Override
             public boolean checkAnswer(final String theAnswer) {
                 if (theAnswer.equals("CORRECT")) return true;
