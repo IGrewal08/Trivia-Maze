@@ -6,5 +6,7 @@ Team members:
 - Inderdeep Grewal
 - Nicolas Cortes
 
+- SRS Document: https://docs.google.com/document/d/1_U6ARgyAsv9eKRTok4VLZbCh8CAvT_4PmWOdwl6V0Ps/edit?usp=sharing
+
 Issues Encountered:
 - None.
