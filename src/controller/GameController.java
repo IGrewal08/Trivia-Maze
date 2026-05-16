@@ -68,7 +68,6 @@ public class GameController {
         if (theAnswer.equals("") || theAnswer == null) {
             throw new IllegalArgumentException("Player answer must not be blank or null.");
         }
-
         Direction dir = myState.getCurrentDirection();
         Position newPos = myState.getCurrentPosition().translate(dir);
         Door door = myState.getMaze().getRoom(newPos).getDoor(dir);
@@ -112,6 +111,7 @@ public class GameController {
         if (theFileName.equals("")) {
             throw new IllegalArgumentException("Save file name must not be empty.");
         }
+        // Call gameSaver myState.setSave(theFileName);
         try (FileOutputStream fileOut = new FileOutputStream(theFileName);
             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
                 out.writeObject(myState);
