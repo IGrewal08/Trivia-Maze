@@ -2,7 +2,10 @@ package controller;
 
 import model.Direction;
 import model.Door;
+import model.GameState;
+import model.GameStatus;
 import model.Position;
+import view.GameView;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -144,6 +147,6 @@ public class GameController {
      */
     public void exitGame() {
         saveGame("GameSave"); // will overwrite any other game save with same name
-        myView.closeWindow();
+        //myView.closeWindow();
     }
 }

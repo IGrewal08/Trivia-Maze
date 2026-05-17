@@ -14,6 +14,9 @@ import model.Direction;
  * to the GameController handleMove function.
  * 
  * Action listeners are registered here as ControlPanel owns the actual buttons.
+ * 
+ * @author Inderdeep Grewal
+ * @version 1.0
  */
 public class ControlPanel extends JPanel {
 
