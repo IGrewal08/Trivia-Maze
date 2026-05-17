@@ -6,10 +6,22 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import controller.GameState;
-
+/**
+ * This class ensures all serializable classes and states are stored in a binary file export
+ * This file can be used to resume from a previously saved state of the game including players positions
+ * rooms and door states and overall game state.
+ * 
+ * @author Inderdeep Grewal
+ * @version 1.0
+ */
 public class GameSaver {
 
+    /**
+     * To save serialized classes and it's data into a binary byte file to capture current games state
+     * 
+     * @param theState the current state, that contains all data fields needed to be captured
+     * @param theFileName the output file name given to this file
+     */
     public static void saveGame(final GameState theState, final String theFileName) {
         if (theFileName.equals("")) {
             throw new IllegalArgumentException("Save file name must not be empty.");
@@ -23,6 +35,12 @@ public class GameSaver {
             }
     }
 
+    /**
+     * To retrieve the serialized binary and deserialize this file to restore game from a previous state
+     *  
+     * @param theFileName identity of the file that holds the serialized data
+     * @return GameState/Null return the deserialized state if file is found else return null
+     */
     public static GameState getSave(final String theFileName) {
         if (theFileName.equals("")) {
             throw new IllegalArgumentException("Load file name must not be empty.");

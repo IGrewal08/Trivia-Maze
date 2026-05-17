@@ -1,4 +1,4 @@
-package controller;
+package db;
 
 import controller.GameState;
 import controller.GameStatus;
