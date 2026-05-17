@@ -1,7 +1,7 @@
-package db;
+package tests.db;
 
-import controller.GameState;
-import controller.GameStatus;
+import model.GameState;
+import model.GameStatus;
 import model.Direction;
 import model.Position;
 

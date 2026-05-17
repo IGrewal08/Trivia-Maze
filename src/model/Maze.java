@@ -76,4 +76,15 @@ public class Maze implements Serializable {
     public int getHeight() {
         return myHeight;
     }
+
+    public boolean isInBounds(final Position thePosition) {
+        if (thePosition == null) {
+            return false;
+        }
+
+        return thePosition.getX() >= 0
+                && thePosition.getX() < myWidth
+                && thePosition.getY() >= 0
+                && thePosition.getY() < myHeight;
+    }
 }

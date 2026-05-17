@@ -17,7 +17,7 @@ import java.io.ObjectOutputStream;
  * Controller to connect the Trivia Maze's view to it's model and database by validating
  * user information such as inputs for trivia questions or movement input into the model for
  * storage and game logic
- * 
+ *
  * @author Inderdeep Grewal
  * @version 1.0
  */
@@ -41,26 +41,44 @@ public class GameController {
         this.myView = theView;
     }
 
-    /**
-     * Handles any player movement to update player position and room status.
-     * @param theDir the current direction the player is looking at
-     */
     public void handleMove(final Direction theDir) {
         if (theDir == null) {
             throw new IllegalArgumentException("Direction within handleMove must not be null.");
         }
+
         Position newPos = myState.getCurrentPosition().translate(theDir);
+
+        System.out.println("Trying to move: " + theDir);
+        System.out.println("New position would be: " + newPos);
+
+        if (!myState.getMaze().isInBounds(newPos)) {
+            myView.showMessage("You cannot move " + theDir + ". That is outside the maze.");
+            myState.firePropertyChange("INVALID_MOVE", null, newPos);
+            return;
+        }
+
         Door door = myState.getMaze().getRoom(newPos).getDoor(theDir);
+
+        if (door == null) {
+            myView.showMessage("No door exists to the " + theDir + " yet.");
+            myState.firePropertyChange("INVALID_MOVE", null, newPos);
+            return;
+        }
 
         if (door.isOpen()) {
             myState.setCurrentPosition(newPos);
             myState.addVisitedRoom(newPos);
-            myState.firePropertyChange("PLAYER_MOVED", null, newPos); // TODO on GameState class
+            myView.showMessage("Moved " + theDir + " to " + newPos);
+            myState.firePropertyChange("PLAYER_MOVED", null, newPos);
         } else if (door.isLocked()) {
             myState.setCurrentDirection(theDir);
+            myView.showMessage("Door is locked. Answer the question to move " + theDir + ".");
+            myView.showQuestions(door.getQuestion());
             myState.firePropertyChange("QUESTION_ASKED", null, door.getQuestion());
+        } else if (door.isBlocked()) {
+            myView.showMessage("That door is blocked.");
+            myState.firePropertyChange("INVALID_MOVE", null, newPos);
         }
-
     }
 
     /**
@@ -68,7 +86,7 @@ public class GameController {
      * @param theAnswer the answer given from the player.
      */
     public void handleAnswer(final String theAnswer) {
-        if (theAnswer.equals("") || theAnswer == null) {
+        if (theAnswer.isBlank() || theAnswer == null) {
             throw new IllegalArgumentException("Player answer must not be blank or null.");
         }
         Direction dir = myState.getCurrentDirection();
@@ -111,7 +129,7 @@ public class GameController {
      * @param theFileName name for the save file for this current iteration of the game.
      */
     public void saveGame(final String theFileName) {
-        if (theFileName.equals("")) {
+        if (theFileName.isBlank()) {
             throw new IllegalArgumentException("Save file name must not be empty.");
         }
         // Call gameSaver myState.setSave(theFileName);

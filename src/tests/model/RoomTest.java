@@ -1,5 +1,6 @@
-package model;
+package tests.model;
 
+import model.Room;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -73,8 +74,12 @@ public class RoomTest {
     }
 
     @Test
-    void testToStringReturnsRoomState() {
-        // TODO: update once doors map is initialized
-        assertNotNull(room.toString());
+    void testToStringUpdatesVisitedState() {
+
+        room.setVisited(true);
+
+        String result = room.toString();
+
+        assertTrue(result.contains("visited=true"));
     }
 }

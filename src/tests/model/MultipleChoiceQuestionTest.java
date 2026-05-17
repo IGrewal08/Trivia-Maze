@@ -1,5 +1,8 @@
-package model;
+package tests.model;
 
+import model.MultipleChoiceQuestion;
+import model.Question;
+import model.QuestionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

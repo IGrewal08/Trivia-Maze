@@ -1,7 +1,10 @@
-package model;
+package tests.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.Door;
+import model.Question;
+import model.QuestionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,16 +24,18 @@ class DoorTest {
     private Door myDoor;
     @BeforeEach
     void setUp() {
-        testQuestion = new Question(0, null, 0) {
+        testQuestion = new Question(0, "Test question?", 0) {
             @Override
             public boolean checkAnswer(final String theAnswer) {
-                if (theAnswer.equals("CORRECT")) return true;
-                return false;
+                return "CORRECT".equals(theAnswer);
             }
 
             @Override
-            public QuestionType getQuestionType() { return null; }
+            public QuestionType getQuestionType() {
+                return QuestionType.SHORT_ANSWER;
+            }
         };
+
         myDoor = new Door(testQuestion);
     }
 

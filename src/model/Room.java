@@ -1,7 +1,7 @@
 package model;
 import java.io.Serializable;
 import java.util.Map;
-
+import java.util.HashMap;
 /**
  * Represents a room within the Trivia Maze consisting of doors in different directions.
  * 
@@ -41,6 +41,7 @@ public class Room implements Serializable {
         this.myX = theX;
         this.myY = theY;
         this.myIsVisited = false;
+        this.myDoors = new HashMap<>();
     }
 
     /**
@@ -111,7 +112,7 @@ public class Room implements Serializable {
      * @param theDir the given direction to build a door
      * @param theDoor the door being place within this room
      */
-    protected void addDoor(final Direction theDir, final Door theDoor) {
+    public void addDoor(final Direction theDir, final Door theDoor) {
         if (theDir == null || theDoor == null) {
             throw new IllegalArgumentException("Direction or Door must not be null.");
         }
@@ -120,11 +121,11 @@ public class Room implements Serializable {
 
     /**
      * Returns string representation of this room's current state.
-     * 
+     *
      * @return the current state of this room (X, Y, doors, visited)
      */
     public String toString() {
-        return String.format("Room [X=%b, Y=%b, doors=%b, visited=%b]", 
+        return String.format("Room [X=%b, Y=%b, doors=%b, visited=%b]",
             myX, myY, myDoors.toString(), myIsVisited);
     }
 }
