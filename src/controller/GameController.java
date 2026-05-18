@@ -105,7 +105,7 @@ public class GameController {
             myState.firePropertyChange("MAZE_UPDATED", null, null);
         }
 
-        if (!myState.getMaze().isPathAvailable(myState.getCurrentPosition())) {
+        if (!myState.getMaze().isPathPossible(myState.getCurrentPosition())) {
             myState.firePropertyChange("GAME_OVER", null, GameStatus.LOST); // TODO build Stats ENUM for game update per event
         }
         

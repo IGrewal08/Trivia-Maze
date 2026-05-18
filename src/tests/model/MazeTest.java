@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * JUnit 5 testing for Maze.
  *
  * Tests maze construction, dimension validation,
- * room retrieval behavior, and temporary path validation logic.
+ * room retrieval behavior, and path reachability through wired doors.
  * Ensures the maze correctly initializes rooms and rejects
  * invalid maze dimensions or positions.
  *
@@ -50,10 +50,14 @@ public class MazeTest {
                 () -> maze.getRoom(null));
     }
 
+    /**
+     * Verifies that isPathPossible returns false on a freshly constructed
+     * maze, since no doors are wired until fillRoomsWithQuestions is called
+     * and BFS therefore finds no traversable edges to the exit.
+     */
     @Test
-    void pathAvailableCurrentlyReturnsTrue() {
-        Maze maze = new Maze(8, 8);
-
-        assertTrue(maze.isPathAvailable(new Position(0, 0)));
+    void isPathPossibleReturnsFalseWhenNoDoorsWired() {
+        final Maze maze = new Maze(8, 8);
+        assertFalse(maze.isPathPossible(new Position(0, 0)));
     }
 }
