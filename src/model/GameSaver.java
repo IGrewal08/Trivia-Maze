@@ -1,5 +1,6 @@
 package model;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,14 +24,34 @@ public class GameSaver {
      * @param theFileName the output file name given to this file
      */
     public static void saveGame(final GameState theState, final String theFileName) {
+
         if (theFileName.equals("")) {
             throw new IllegalArgumentException("Save file name must not be empty.");
         }
-        try (FileOutputStream fileOut = new FileOutputStream(theFileName);
+        if (theState == null) {
+            throw new IllegalArgumentException("GameState must not be null.");
+        }
+
+        // Check if saves directory exists, create one if it doesn't
+        final File dir = new File("saves" + File.separator);
+        if (!dir.exists()) {
+            if (dir.mkdir()) {
+                System.out.println("Create saves/ directory.");
+            } else {
+                System.err.println("Warning: could not create saves/ directory");
+            }
+        }
+
+        final String path = "saves" + File.separator + theFileName + ".save";
+
+        try (FileOutputStream fileOut = new FileOutputStream(path);
             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+
                 out.writeObject(theState);
-                System.out.println("Serialized to file: " + theFileName);
-            } catch (IOException e) {
+                System.out.println("Serialized file to: " + path);
+
+            } catch (final IOException e) {
+                System.err.println("Failed to save game: " + e.getMessage());
                 e.printStackTrace();
             }
     }
@@ -42,18 +63,30 @@ public class GameSaver {
      * @return GameState/Null return the deserialized state if file is found else return null
      */
     public static GameState getSave(final String theFileName) {
-        if (theFileName.equals("")) {
+        
+        if (theFileName.isBlank() || theFileName == null) {
             throw new IllegalArgumentException("Load file name must not be empty.");
         }
-        GameState fetchState = null;
+
+        final String path = "saves" + File.separator + theFileName + ".save";
+
+        if (!new File(path).exists()) {
+            System.out.println("No save file found at: " + path);
+            return null;
+        }
+
         try (FileInputStream fileIn = new FileInputStream(theFileName);
             ObjectInputStream in = new ObjectInputStream(fileIn)) {
-                fetchState = (GameState) in.readObject();
+
+                final GameState fetchState =  (GameState) in.readObject();
+                System.out.println("Game loaded from: " + path);
+                return fetchState;
+
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         } catch (ClassNotFoundException e) {
             System.out.println("Class not found: " + e.getMessage());
         }
-        return fetchState;
+        return null;
     }
 }
