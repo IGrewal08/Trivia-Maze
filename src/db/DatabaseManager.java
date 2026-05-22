@@ -10,13 +10,24 @@ import java.util.List;
 
 import model.QuestionType;
 
+/**
+ * DatabaseManager handles all SQLite queries for the Trivia Maze application.
+ * Returns ResultSet objects, keeping database access decoupled from questions construction.
+ * 
+ * @author Inderdeep Grewal
+ * @version 1.0
+ */
 public class DatabaseManager {
 
+    /** Activates JDBC connection to the SQLite db */
     private static transient Connection CONNECT;
+    /** Path to the SQLite database relative to project root. */
     private static final String DB_PATH = "jdbc:sqlite:resource/trivia.db";
 
-    public DatabaseManager() {}
-
+    /**
+     * Opens a JDBC connection to the SQLite database at path.
+     * @throws SQLException if a connection cannot be established.
+     */
     public static void connect() {
         try {
             CONNECT = DriverManager.getConnection(DB_PATH);
@@ -27,6 +38,9 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Close the active JDBC connection, call when the application exits.
+     */
     public static void disconnect() {
         try {
             if (CONNECT != null && !CONNECT.isClosed()) {
@@ -40,6 +54,13 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Returns the question row with the given primary key ID.
+     * 
+     * @param theId the primary key of the question to retrieve.
+     * @return a ResultSet positioned before the first row.
+     * @throws SQLException if the query fails.
+     */
     public static ResultSet getQuestionById(final int theId) throws SQLException {
         final String sql = """
                 SELECT *
@@ -53,6 +74,12 @@ public class DatabaseManager {
 
     }
 
+    /**
+     * Returns all rows from the questions table with no filters applied.
+     * 
+     * @return a ResultSet containing every row in the questions table.
+     * @throws SQLException if the query fails.
+     */
     public static ResultSet getAllQuestions() throws SQLException {
         final String sql = """
                 SELECT *
@@ -63,6 +90,13 @@ public class DatabaseManager {
         return stat.executeQuery();
     }
 
+    /**
+     * Returns all question rows that match the given category.
+     * 
+     * @param theCategory the category to filter by.
+     * @return a ResultSet containing all questions in the category.
+     * @throws SQLException if the query fails.
+     */
     public static ResultSet getAllQuestionsByCategory(final String theCategory) throws SQLException {
         if (theCategory == null || theCategory.equals("")) {
             throw new IllegalArgumentException("Category must not be null.");
@@ -81,6 +115,13 @@ public class DatabaseManager {
         return stat.executeQuery();
     }
 
+    /**
+     * Returns all question rows that match the given question type.
+     * 
+     * @param theType the question type to filter by.
+     * @return a ResultSet containing all questions of that type.
+     * @throws SQLException if the query fails.
+     */
     public static ResultSet getAllQuestionsByType(final QuestionType theType) throws SQLException {
         if (theType == null) {
             throw new IllegalArgumentException("Type must not be null");
@@ -98,6 +139,12 @@ public class DatabaseManager {
         return stat.executeQuery();
     }
 
+    /**
+     * Returns a list of all categories names in the database.
+     * 
+     * @return a list of category name strings.
+     * @throws SQLException if the query fails.
+     */
     public static List<String> getCategories() throws SQLException {
         final String sql = """
                 SELECT DISTINCT category
@@ -115,7 +162,4 @@ public class DatabaseManager {
             }
         return categories;
     }
-
-
-
 }

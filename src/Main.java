@@ -1,4 +1,5 @@
 import controller.GameController;
+import db.DatabaseManager;
 import db.Schema;
 import model.GameState;
 import view.GameView;
@@ -8,6 +9,8 @@ public class Main {
 
     public static void main(final String[] theArgs) {
         Schema.initialize();
+        DatabaseManager db = new DatabaseManager(); // use in QuestionFactory
+
         GameState state = new GameState(8, 8);
         GameView view = new GuiView();
 
