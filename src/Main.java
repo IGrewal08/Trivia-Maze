@@ -1,4 +1,5 @@
 import controller.GameController;
+import db.Schema;
 import model.GameState;
 import view.GameView;
 import view.GuiView;
@@ -6,6 +7,7 @@ import view.GuiView;
 public class Main {
 
     public static void main(final String[] theArgs) {
+        Schema.initialize();
         GameState state = new GameState(8, 8);
         GameView view = new GuiView();
 
