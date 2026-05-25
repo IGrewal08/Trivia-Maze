@@ -26,7 +26,7 @@ public class GameControllerTest {
     @BeforeEach
     void setUp() {
         testState = new GameState(5, 5);
-        testView = new GuiView();
+        testView = new GuiView(testState);
         testController = new GameController(testState, testView);
     }
 

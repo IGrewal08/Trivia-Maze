@@ -1,5 +1,6 @@
 package view;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -36,9 +37,10 @@ public class ControlPanel extends JPanel {
     public ControlPanel(final GameController theController) {
         super();
         if (theController == null) {
-            throw new Error("The controller must not be null.");
+            throw new IllegalArgumentException("The controller must not be null.");
         }
         this.myController = theController;
+        myDirectionButtons = new EnumMap<>(Direction.class);
         myDirectionButtons.put(Direction.NORTH, new JButton("North"));
         myDirectionButtons.put(Direction.SOUTH, new JButton("South"));
         myDirectionButtons.put(Direction.WEST, new JButton("West"));
@@ -86,7 +88,7 @@ public class ControlPanel extends JPanel {
      */
     public void enableDirection(final Direction theDir, final boolean theEnable) {
         if (theDir == null) {
-            throw new Error("Must pass in a valid direction.");
+            throw new IllegalArgumentException("Must pass in a valid direction.");
         }
         myDirectionButtons.get(theDir).setEnabled(theEnable);
     }
