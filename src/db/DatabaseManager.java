@@ -92,7 +92,7 @@ public class DatabaseManager {
 
     /**
      * Returns all question rows that match the given category.
-     * 
+     *
      * @param theCategory the category to filter by.
      * @return a ResultSet containing all questions in the category.
      * @throws SQLException if the query fails.
@@ -103,15 +103,64 @@ public class DatabaseManager {
         }
 
         final String sql = """
-                SELECT * 
+                SELECT *
                 FROM questions
-                WHERE CATEGORY = ?
+                WHERE category = ?
+                ORDER BY id
+                """;
+
+        final PreparedStatement stat = CONNECT.prepareStatement(sql);
+        stat.setString(1, theCategory);
+        return stat.executeQuery();
+    }
+
+    /**
+     * Returns a single randomly-selected question row matching the given category.
+     *
+     * @param theCategory the category to filter by.
+     * @return a ResultSet positioned before a single row, or empty if no match.
+     * @throws SQLException if the query fails.
+     */
+    public static ResultSet getRandomQuestionByCategory(final String theCategory) throws SQLException {
+        if (theCategory == null || theCategory.equals("")) {
+            throw new IllegalArgumentException("Category must not be null.");
+        }
+
+        final String sql = """
+                SELECT *
+                FROM questions
+                WHERE category = ?
                 ORDER BY RANDOM()
                 LIMIT 1
                 """;
 
         final PreparedStatement stat = CONNECT.prepareStatement(sql);
         stat.setString(1, theCategory);
+        return stat.executeQuery();
+    }
+
+    /**
+     * Returns a single randomly-selected question row matching the given type.
+     *
+     * @param theType the question type to filter by.
+     * @return a ResultSet positioned before a single row, or empty if no match.
+     * @throws SQLException if the query fails.
+     */
+    public static ResultSet getRandomQuestionByType(final QuestionType theType) throws SQLException {
+        if (theType == null) {
+            throw new IllegalArgumentException("Type must not be null");
+        }
+
+        final String sql = """
+                SELECT *
+                FROM questions
+                WHERE type = ?
+                ORDER BY RANDOM()
+                LIMIT 1
+                """;
+
+        final PreparedStatement stat = CONNECT.prepareStatement(sql);
+        stat.setString(1, theType.name());
         return stat.executeQuery();
     }
 

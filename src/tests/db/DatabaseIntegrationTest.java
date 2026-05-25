@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseIntegrationTest {
 
-    private static final String URL = "jdbc:sqlite:./resources/trivia.db";
+    private static final String URL = "jdbc:sqlite:resource/trivia.db";
 
     @Test
     void testDatabaseConnects() throws Exception {
