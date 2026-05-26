@@ -46,17 +46,11 @@ import model.Question;
  * itself when {@code "ANSWER_RESULT"} fires.
  *
  * @author Anwar Noor
- * @version 1.0
+ * @version 2.0
  */
-public class QuestionPanel extends JPanel implements PropertyChangeListener {
+public class QuestionPanel extends JPanel {
 
-    /** Property name fired when a new question becomes active. */
-    private static final String QUESTION_ASKED = "QUESTION_ASKED";
-
-    /** Property name fired when the controller judges an answer. */
-    private static final String ANSWER_RESULT = "ANSWER_RESULT";
-
-    /** Preferred panel width in pixels. */
+        /** Preferred panel width in pixels. */
     private static final int PANEL_WIDTH = 350;
 
     /** Preferred panel height in pixels. */
@@ -68,13 +62,10 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
     /** Font used for the question prompt. */
     private static final Font PROMPT_FONT = new Font("SansSerif", Font.BOLD, 14);
 
-    /** Game state observed for question and answer events. */
-    private final GameState myState;
-
     /** Controller used to submit answers. */
     private final GameController myController;
 
-    /** Currently displayed question, or null when the panel is idle. */
+    /** Currently displayed question, or null when idle. */
     private Question myQuestion;
 
     /** Reusable input field for short-answer questions. */
@@ -84,31 +75,22 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
     private final List<JRadioButton> myOptionButtons;
 
     /**
-     * Creates a QuestionPanel bound to the given state and controller.
-     * Starts in the idle "no active question" state and registers itself
-     * as a property change listener on the state.
+     * Creates a QuestionPanel bound to the given controller.
+     * Starts in the idle state.
      *
-     * @param theState the active GameState; must not be null
      * @param theController the controller used to submit answers; must not be null
-     * @throws IllegalArgumentException if either argument is null
+     * @throws IllegalArgumentException if theController is null
      */
-    public QuestionPanel(final GameState theState,
-                         final GameController theController) {
+    public QuestionPanel(final GameController theController) {
         super();
-        if (theState == null) {
-            throw new IllegalArgumentException("GameState must not be null.");
-        }
         if (theController == null) {
             throw new IllegalArgumentException("GameController must not be null.");
         }
 
-        myState = theState;
         myController = theController;
         myQuestion = null;
         myAnswerField = new JTextField(ANSWER_FIELD_COLUMNS);
         myOptionButtons = new ArrayList<>();
-
-        myState.addPropertyChangeListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -118,35 +100,46 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
     }
 
     /**
-     * Handles property change events from the GameState. On
-     * {@code "QUESTION_ASKED"} the panel rebuilds its widgets for the
-     * new question; on {@code "ANSWER_RESULT"} it shows a brief verdict
-     * and returns to the idle state. All other events are ignored.
+     * Displays the given question with the appropriate input widget.
+     * Called by GuiView when it receives a QUESTION_ASKED event.
      *
-     * @param theEvent the property change event
+     * @param theQuestion the question to display; must not be null
      */
-    @Override
-    public void propertyChange(final PropertyChangeEvent theEvent) {
-        final String name = theEvent.getPropertyName();
-        if (QUESTION_ASKED.equals(name)) {
-            myQuestion = (Question) theEvent.getNewValue();
-            displayQuestion();
-        } else if (ANSWER_RESULT.equals(name)) {
-            final boolean correct = (boolean) theEvent.getNewValue();
-            myQuestion = null;
-            showResult(correct);
+    public void displayQuestion(final Question theQuestion) {
+        if (theQuestion == null) {
+            return;
         }
+        myQuestion = theQuestion;
+        buildQuestionUI();
     }
 
     /**
-     * Rebuilds the panel's widgets to display {@link #myQuestion}.
-     * Picks the input style by {@link Question#getQuestionType()}: radio
-     * buttons for multiple choice, two direct buttons for true/false,
-     * and the reusable text field for short answer. A Submit button is
-     * added for MC and SA (true/false submits directly from its
-     * buttons); a Skip button is always added.
+     * Shows a transient verdict message after an answer has been judged,
+     * then returns the panel to its idle state. The label persists until
+     * the next question arrives or the panel is interacted with.
+     *
+     * @param theCorrect true if the answer was judged correct
      */
-    private void displayQuestion() {
+    public void showResult(final boolean theCorrect) {
+        removeAll();
+        myQuestion = null;
+
+        final JLabel verdict = new JLabel(
+                theCorrect ? "Correct!" : "Incorrect.",
+                SwingConstants.CENTER);
+        verdict.setAlignmentX(Component.LEFT_ALIGNMENT);
+        verdict.setFont(PROMPT_FONT);
+        add(verdict);
+
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Rebuilds the panel widgets for the current question.
+     * Routes to the correct input style by question type.
+     */
+    private void buildQuestionUI() {
         removeAll();
 
         final JTextArea prompt = new JTextArea(myQuestion.getQuestionText());
@@ -163,8 +156,8 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
 
         switch (myQuestion.getQuestionType()) {
             case MULTIPLE_CHOICE -> addMultipleChoiceWidgets();
-            case TRUE_FALSE     -> addTrueFalseWidgets();
-            case SHORT_ANSWER   -> addShortAnswerWidgets();
+            case TRUE_FALSE      -> addTrueFalseWidgets();
+            case SHORT_ANSWER    -> addShortAnswerWidgets();
         }
 
         add(Box.createVerticalStrut(10));
@@ -222,7 +215,7 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
         add(falseButton);
     }
 
-    /**
+        /**
      * Adds the reusable answer field and a Submit button that forwards
      * the field's current text.
      */
@@ -239,7 +232,7 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
         add(Box.createVerticalStrut(6));
         add(submit);
     }
-
+    
     /**
      * Builds the Skip button. Skipping submits {@link Question#SKIP},
      * which every question type treats as a correct free-pass.
@@ -265,25 +258,6 @@ public class QuestionPanel extends JPanel implements PropertyChangeListener {
             return;
         }
         myController.handleAnswer(theAnswer);
-    }
-
-    /**
-     * Shows a transient verdict message after an answer has been judged,
-     * then returns the panel to its idle state. The label persists until
-     * the next question arrives or the panel is interacted with.
-     *
-     * @param theCorrect true if the answer was judged correct
-     */
-    private void showResult(final boolean theCorrect) {
-        removeAll();
-        final JLabel verdict = new JLabel(
-                theCorrect ? "Correct!" : "Incorrect.",
-                SwingConstants.CENTER);
-        verdict.setAlignmentX(Component.LEFT_ALIGNMENT);
-        verdict.setFont(PROMPT_FONT);
-        add(verdict);
-        revalidate();
-        repaint();
     }
 
     /**

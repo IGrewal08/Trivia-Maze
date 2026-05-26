@@ -110,7 +110,7 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
 
         myMapPanel = new MapPanel(myState);
         myRoomPanel = new RoomPanel(myState, myController);
-        myQuestionPanel = new QuestionPanel(myState, myController);
+        myQuestionPanel = new QuestionPanel(myController);
         myControlPanel = new ControlPanel(myController);
 
         add(wrap(myMapPanel), BorderLayout.WEST);
