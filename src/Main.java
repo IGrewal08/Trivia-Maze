@@ -5,8 +5,7 @@ import model.GameState;
 import view.GuiView;
 
 public class Main {
-
-    public static void main(final String[] theArgs) {
+        public static void main(final String[] theArgs) {
         Schema.initialize();
         DatabaseManager.connect();
         Runtime.getRuntime().addShutdownHook(new Thread(DatabaseManager::disconnect));

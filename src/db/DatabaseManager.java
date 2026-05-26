@@ -22,7 +22,17 @@ public class DatabaseManager {
     /** Activates JDBC connection to the SQLite db */
     private static transient Connection CONNECT;
     /** Path to the SQLite database relative to project root. */
-    private static final String DB_PATH = "jdbc:sqlite:resource/trivia.db";
+    private static final String DB_PATH = "jdbc:sqlite:resources/trivia.db";
+
+    static {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("SQLite JDBC Driver registered successfully.");
+        } catch (ClassNotFoundException e) {
+            System.err.println("SQLite JDBC Driver not found! Make sure the JAR is on the classpath.");
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Opens a JDBC connection to the SQLite database at path.
@@ -36,6 +46,15 @@ public class DatabaseManager {
             System.err.println("Error trying to establish a connection: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Returns DB connection string.
+     * Intended for Schema to create schema for database at a selected location.
+     * @return db path string
+     */
+    public static String getDBPath() {
+        return DB_PATH;
     }
 
     /**

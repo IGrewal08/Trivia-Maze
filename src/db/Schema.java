@@ -30,7 +30,7 @@ public class Schema {
      * Creates table and seeds data when needed.
      */
     public static void initialize() {
-        try (Connection con = DriverManager.getConnection("jdbc:sqlite:resource/trivia.db");
+        try (Connection con = DriverManager.getConnection(DatabaseManager.getDBPath());
             Statement stat = con.createStatement()) {
                 createTable(stat);
 

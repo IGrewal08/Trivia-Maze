@@ -38,9 +38,11 @@ public class GameController {
             throw new IllegalArgumentException("Direction within handleMove must not be null.");
         }
 
+        Position currPos = myState.getCurrentPosition();
         Position newPos = myState.getCurrentPosition().translate(theDir);
 
         System.out.println("Trying to move: " + theDir);
+        System.out.println("Current position: " + currPos);
         System.out.println("New position would be: " + newPos);
 
         if (!myState.getMaze().isInBounds(newPos)) {
@@ -49,7 +51,10 @@ public class GameController {
             return;
         }
 
-        Door door = myState.getMaze().getRoom(newPos).getDoor(theDir);
+        Door door = myState.getMaze().getRoom(currPos).getDoor(theDir);
+        
+        Room currentRoom = myState.getMaze().getRoom(currPos);
+        System.out.println("Doors in current room " + currPos + ": " + currentRoom.toString());
 
         if (door == null) {
             myView.showMessage("No door exists to the " + theDir + " yet.");
@@ -82,8 +87,10 @@ public class GameController {
             throw new IllegalArgumentException("Player answer must not be blank or null.");
         }
         Direction dir = myState.getCurrentDirection();
+        Position currPos = myState.getCurrentPosition();
         Position newPos = myState.getCurrentPosition().translate(dir);
-        Door door = myState.getMaze().getRoom(newPos).getDoor(dir);
+
+        Door door = myState.getMaze().getRoom(currPos).getDoor(dir);
 
         if (door.attemptUnlock(theAnswer)) {
             door.unlock();
