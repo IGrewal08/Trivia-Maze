@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
+import controller.GameController;
 import model.GameState;
 import model.Maze;
 import model.Position;
@@ -24,9 +25,9 @@ import model.Position;
  * repaints itself whenever the player's position changes.
  *
  * @author Anwar Noor
- * @version 1.0
+ * @version 2.0
  */
-public class MapPanel extends JPanel implements PropertyChangeListener {
+public class MapPanel extends JPanel {
 
     /** Pixel size of a single room cell. */
     private static final int CELL_SIZE = 60;
@@ -34,8 +35,8 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
     /** Pixel margin around the grid. */
     private static final int MARGIN = 10;
 
-    /** Property name fired by GameState when the player's position changes. */
-    private static final String CURRENT_POSITION = "CURRENT_POSITION";
+    /** Inset, in pixels, between the player marker and the cell edge. */
+    private static final int PLAYER_INSET = 12;
 
     /** Background color of the panel. */
     private static final Color BACKGROUND_COLOR = new Color(40, 40, 40);
@@ -61,11 +62,8 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
     /** Color used to draw the player marker. */
     private static final Color PLAYER_COLOR = new Color(20, 60, 200);
 
-    /** Inset, in pixels, between the player marker and the cell edge. */
-    private static final int PLAYER_INSET = 12;
-
-    /** Reference to the active game state, used to refresh visited rooms on each move. */
-    private final GameState myState;
+    /** Controller queried for position, visited rooms, and maze. */
+    private final GameController myController;
 
     /** The maze being drawn. */
     private Maze myMaze;
@@ -84,40 +82,35 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
      * @param theState the active GameState; must not be null
      * @throws IllegalArgumentException if theState is null
      */
-    public MapPanel(final GameState theState) {
+    public MapPanel(final GameController theController) {
         super();
-        if (theState == null) {
-            throw new IllegalArgumentException("GameState must not be null.");
+        if (theController == null) {
+            throw new IllegalArgumentException("GameController must not be null.");
         }
+        myController = theController;
 
-        myState = theState;
-        myMaze = theState.getMaze();
-        myCurrentPos = theState.getCurrentPosition();
-        myVisited = theState.getVisitedRooms();
+        // Fetch initial state from controller — not from GameState directly
+        myMaze       = myController.getMaze();
+        myCurrentPos = myController.getCurrentPosition();
+        myVisited    = myController.getVisitedRooms();
 
-        theState.addPropertyChangeListener(this);
-
-        final int width = myMaze.getWidth() * CELL_SIZE + 2 * MARGIN;
+        final int width  = myMaze.getWidth()  * CELL_SIZE + 2 * MARGIN;
         final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN;
         setPreferredSize(new Dimension(width, height));
         setBackground(BACKGROUND_COLOR);
     }
 
-    /**
-     * Handles property change events fired by the GameState. Only reacts
-     * to {@code "CURRENT_POSITION"} events; on each one the panel pulls
-     * the latest current position and visited set from the state and
-     * repaints itself.
-     *
-     * @param theEvent the property change event from the GameState
-     */
-    @Override
-    public void propertyChange(final PropertyChangeEvent theEvent) {
-        if (!CURRENT_POSITION.equals(theEvent.getPropertyName())) {
-            return;
-        }
-        myCurrentPos = (Position) theEvent.getNewValue();
-        myVisited = myState.getVisitedRooms();
+    public void refreshMaze() {
+        myMaze       = myController.getMaze();
+        myCurrentPos = myController.getCurrentPosition();
+        myVisited    = myController.getVisitedRooms();
+
+        // Recalculate preferred size in case maze dimensions changed
+        final int width  = myMaze.getWidth()  * CELL_SIZE + 2 * MARGIN;
+        final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN;
+        setPreferredSize(new Dimension(width, height));
+
+        revalidate();
         repaint();
     }
 
@@ -135,17 +128,14 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // TODO: replace hardcoded entrance/exit with Maze.getEntrance()/getExit()
-        // once those accessors are added to Maze.
-        final Position entrance = new Position(0, 0);
-        final Position exit = new Position(myMaze.getWidth() - 1,
-                                           myMaze.getHeight() - 1);
+        final Position entrance = myMaze.getEntrance();
+        final Position exit     = myMaze.getExit();
 
         for (int y = 0; y < myMaze.getHeight(); y++) {
             for (int x = 0; x < myMaze.getWidth(); x++) {
-                final Position pos = new Position(x, y);
-                final int pixelX = MARGIN + x * CELL_SIZE;
-                final int pixelY = MARGIN + y * CELL_SIZE;
+                final Position pos    = new Position(x, y);
+                final int     pixelX  = MARGIN + x * CELL_SIZE;
+                final int     pixelY  = MARGIN + y * CELL_SIZE;
 
                 final Color fill;
                 if (pos.equals(myCurrentPos)) {
@@ -155,9 +145,9 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
                 } else {
                     fill = UNVISITED_COLOR;
                 }
+
                 g2.setColor(fill);
                 g2.fillRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
-
                 g2.setColor(GRID_LINE_COLOR);
                 g2.drawRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
 
@@ -169,8 +159,9 @@ public class MapPanel extends JPanel implements PropertyChangeListener {
             }
         }
 
-        final int playerX = MARGIN + myCurrentPos.getX() * CELL_SIZE + PLAYER_INSET;
-        final int playerY = MARGIN + myCurrentPos.getY() * CELL_SIZE + PLAYER_INSET;
+        // Draw player marker on top of current room
+        final int playerX        = MARGIN + myCurrentPos.getX() * CELL_SIZE + PLAYER_INSET;
+        final int playerY        = MARGIN + myCurrentPos.getY() * CELL_SIZE + PLAYER_INSET;
         final int playerDiameter = CELL_SIZE - 2 * PLAYER_INSET;
         g2.setColor(PLAYER_COLOR);
         g2.fillOval(playerX, playerY, playerDiameter, playerDiameter);

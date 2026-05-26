@@ -1,19 +1,9 @@
 package controller;
 
-import model.Direction;
-import model.Door;
-import model.GameSaver;
-import model.GameState;
-import model.GameStatus;
-import model.Position;
-import model.Room;
-import view.GameView;
+import java.util.Set;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import model.*;
+import view.GameView;
 
 /**
  * Controller to connect the Trivia Maze's view to it's model and database by validating
@@ -111,6 +101,42 @@ public class GameController {
             myState.firePropertyChange("GAME_OVER", null, GameStatus.LOST); // TODO build Stats ENUM for game update per event
         }
         
+    }
+
+    /**
+     * Returns the room the player is currently in.
+     * Called by RoomPanel to get the room to render after a move.
+     * @return the player's current Room
+     */
+    public Room getCurrentRoom() {
+        return myState.getMaze().getRoom(myState.getCurrentPosition());
+    }
+
+    /**
+     * Returns the maze the current game is in.
+     * Called by MapPanel to get the maze to render after each move.
+     * @return the maze for the game
+     */
+    public Maze getMaze() {
+        return myState.getMaze();
+    }
+
+    /**
+     * Returns the current position of the player.
+     * Called by MapPanel to render player on the maze map.
+     * @return the player's current position
+     */
+    public Position getCurrentPosition() {
+        return myState.getCurrentPosition();
+    }
+
+    /**
+     * Returns the current visited rooms by the player.
+     * Called by MapPanel to render and differentiate visited rooms.
+     * @return the player's visited rooms
+     */
+    public Set<Position> getVisitedRooms() {
+        return myState.getVisitedRooms();
     }
 
     /**

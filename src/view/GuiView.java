@@ -108,8 +108,8 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
         }
         myController = theController;
 
-        myMapPanel = new MapPanel(myState);
-        myRoomPanel = new RoomPanel(myState, myController);
+        myMapPanel = new MapPanel(myController);
+        myRoomPanel = new RoomPanel(myController);
         myQuestionPanel = new QuestionPanel(myController);
         myControlPanel = new ControlPanel(myController);
 
@@ -142,14 +142,14 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
         switch (theEvent.getPropertyName()) {
 
             case "MAZE_UPDATED" -> {
-                myMapPanel.repaint();
-                myRoomPanel.repaint();
+                myMapPanel.refreshMaze();
+                myRoomPanel.refreshRoom();
                 updateDirectionButtons();
             }
 
             case "PLAYER_MOVED" -> {
-                myMapPanel.repaint();
-                myRoomPanel.repaint();
+                myMapPanel.refreshMaze();
+                myRoomPanel.refreshRoom();
                 updateDirectionButtons();
             }
 
@@ -161,6 +161,7 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
             case "ANSWER_RESULT" -> {
                 boolean correct = (boolean) theEvent.getNewValue();
                 myQuestionPanel.showResult(correct);
+                myRoomPanel.refreshRoom();
             }
 
             case "GAME_OVER" -> {

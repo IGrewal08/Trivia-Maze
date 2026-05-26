@@ -34,13 +34,7 @@ import model.Room;
  * @author Anwar Noor
  * @version 1.0
  */
-public class RoomPanel extends JPanel implements PropertyChangeListener {
-
-    /** Property name fired when the player's position changes. */
-    private static final String CURRENT_POSITION = "CURRENT_POSITION";
-
-    /** Property name fired when a trivia answer is submitted. */
-    private static final String ANSWER_RESULT = "ANSWER_RESULT";
+public class RoomPanel extends JPanel {
 
     /** Pixel width and height of the panel. */
     private static final int PANEL_SIZE = 300;
@@ -53,6 +47,9 @@ public class RoomPanel extends JPanel implements PropertyChangeListener {
 
     /** Pixel length of a door's long edge. */
     private static final int DOOR_LENGTH = 56;
+
+    /** Pixel thickness of the room's wall stroke. */
+    private static final int WALL_STROKE = 4;
 
     /** Background color of the panel. */
     private static final Color BACKGROUND_COLOR = new Color(40, 40, 40);
@@ -78,12 +75,6 @@ public class RoomPanel extends JPanel implements PropertyChangeListener {
     /** Color used for the small coordinate label. */
     private static final Color LABEL_COLOR = new Color(80, 60, 30);
 
-    /** Pixel thickness of the room's wall stroke. */
-    private static final int WALL_STROKE = 4;
-
-    /** Game state observed for moves and answer results. */
-    private final GameState myState;
-
     /** Controller used to forward door-click move attempts. */
     private final GameController myController;
 
@@ -95,25 +86,16 @@ public class RoomPanel extends JPanel implements PropertyChangeListener {
      * Derives the initial room from the state's current position and
      * registers as a property change listener.
      *
-     * @param theState the active GameState; must not be null
      * @param theController the controller used for click-to-move; must not be null
      * @throws IllegalArgumentException if either argument is null
      */
-    public RoomPanel(final GameState theState,
-                     final GameController theController) {
+    public RoomPanel(final GameController theController) {
         super();
-        if (theState == null) {
-            throw new IllegalArgumentException("GameState must not be null.");
-        }
         if (theController == null) {
             throw new IllegalArgumentException("GameController must not be null.");
         }
-
-        myState = theState;
         myController = theController;
-        myRoom = theState.getMaze().getRoom(theState.getCurrentPosition());
-
-        theState.addPropertyChangeListener(this);
+        myRoom = myController.getCurrentRoom();
 
         setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
         setBackground(BACKGROUND_COLOR);
@@ -127,23 +109,12 @@ public class RoomPanel extends JPanel implements PropertyChangeListener {
     }
 
     /**
-     * Handles property change events from the GameState. Refreshes the
-     * tracked room on {@code "CURRENT_POSITION"} and repaints. On
-     * {@code "ANSWER_RESULT"} the room reference is unchanged but a
-     * door's state has flipped, so the panel just repaints. All other
-     * events are ignored.
-     *
-     * @param theEvent the property change event
+     * Updates teh displayed room and repaints.
+     * Called by GuiView on PLAYER_MOVED and MAZE_UPDATED events.
      */
-    @Override
-    public void propertyChange(final PropertyChangeEvent theEvent) {
-        final String name = theEvent.getPropertyName();
-        if (CURRENT_POSITION.equals(name)) {
-            myRoom = myState.getMaze().getRoom(myState.getCurrentPosition());
-            repaint();
-        } else if (ANSWER_RESULT.equals(name)) {
-            repaint();
-        }
+    public void refreshRoom() {
+        myRoom = myController.getCurrentRoom();
+        repaint();
     }
 
     /**
