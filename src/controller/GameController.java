@@ -2,9 +2,11 @@ package controller;
 
 import model.Direction;
 import model.Door;
+import model.GameSaver;
 import model.GameState;
 import model.GameStatus;
 import model.Position;
+import model.Room;
 import view.GameView;
 
 import java.io.FileInputStream;
@@ -132,14 +134,7 @@ public class GameController {
         if (theFileName.isBlank()) {
             throw new IllegalArgumentException("Save file name must not be empty.");
         }
-        // Call gameSaver myState.setSave(theFileName);
-        try (FileOutputStream fileOut = new FileOutputStream(theFileName);
-            ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-                out.writeObject(myState);
-                System.out.println("Serialized to file: " + theFileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        GameSaver.saveGame(myState, theFileName);
     }
 
     /**
@@ -150,14 +145,7 @@ public class GameController {
         if (theFileName.equals("")) {
             throw new IllegalArgumentException("Load file name must not be empty.");
         }
-        try (FileInputStream fileIn = new FileInputStream(theFileName);
-            ObjectInputStream in = new ObjectInputStream(fileIn)) {
-                myState = (GameState) in.readObject();
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class not found: " + e.getMessage());
-        }
+        GameSaver.getSave(theFileName);
     }
 
     /**
@@ -166,5 +154,19 @@ public class GameController {
     public void exitGame() {
         saveGame("GameSave"); // will overwrite any other game save with same name
         //myView.closeWindow();
+    }
+
+	/**
+     * Returns whether the given direction is a valid move from
+     * the player's current position — door exists and is not blocked.
+     * Called by GuiView to update the control panel buttons.
+     *
+     * @param theDir the direction to check
+     * @return true if the player can attempt to move that direction
+     */
+    public boolean isDirectionAvailable(final Direction theDir) {
+        Room currentRoom = myState.getMaze().getRoom(myState.getCurrentPosition());
+        Door door = currentRoom.getDoor(theDir);
+        return door != null && !door.isBlocked();
     }
 }

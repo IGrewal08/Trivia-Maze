@@ -2,6 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -9,7 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import controller.GameController;
+import model.Direction;
 import model.GameState;
+import model.GameStatus;
 import model.Question;
 
 /**
@@ -33,7 +37,7 @@ import model.Question;
  * @author Nicholas Cortes
  * @version 2.0
  */
-public class GuiView extends JFrame implements GameView {
+public class GuiView extends JFrame implements GameView, PropertyChangeListener {
 
     /** Default frame width in pixels. */
     private static final int FRAME_WIDTH = 1200;
@@ -49,6 +53,11 @@ public class GuiView extends JFrame implements GameView {
 
     /** The controller; null until {@link #setController(GameController)} runs. */
     private GameController myController;
+
+    private MapPanel myMapPanel;
+    private RoomPanel myRoomPanel;
+    private QuestionPanel myQuestionPanel;
+    private ControlPanel myControlPanel;
 
     /**
      * Creates a GuiView bound to the given state. Renders the frame
@@ -99,15 +108,15 @@ public class GuiView extends JFrame implements GameView {
         }
         myController = theController;
 
-        final MapPanel mapPanel = new MapPanel(myState);
-        final RoomPanel roomPanel = new RoomPanel(myState, myController);
-        final QuestionPanel questionPanel = new QuestionPanel(myState, myController);
-        final ControlPanel controlPanel = new ControlPanel(myController);
+        myMapPanel = new MapPanel(myState);
+        myRoomPanel = new RoomPanel(myState, myController);
+        myQuestionPanel = new QuestionPanel(myState, myController);
+        myControlPanel = new ControlPanel(myController);
 
-        add(wrap(mapPanel), BorderLayout.WEST);
-        add(wrap(roomPanel), BorderLayout.CENTER);
-        add(wrap(questionPanel), BorderLayout.EAST);
-        add(wrap(controlPanel), BorderLayout.SOUTH);
+        add(wrap(myMapPanel), BorderLayout.WEST);
+        add(wrap(myRoomPanel), BorderLayout.CENTER);
+        add(wrap(myQuestionPanel), BorderLayout.EAST);
+        add(wrap(myControlPanel), BorderLayout.SOUTH);
 
         revalidate();
         repaint();
@@ -122,6 +131,61 @@ public class GuiView extends JFrame implements GameView {
         final JPanel wrapper = new JPanel();
         wrapper.add(theInner);
         return wrapper;
+    }
+
+    @Override
+    public void propertyChange(final PropertyChangeEvent theEvent) {
+        if (myMapPanel == null || myQuestionPanel == null) {
+            return;
+        }
+
+        switch (theEvent.getPropertyName()) {
+
+            case "MAZE_UPDATED" -> {
+                myMapPanel.repaint();
+                myRoomPanel.repaint();
+                updateDirectionButtons();
+            }
+
+            case "PLAYER_MOVED" -> {
+                myMapPanel.repaint();
+                myRoomPanel.repaint();
+                updateDirectionButtons();
+            }
+
+            case "QUESTION_ASKED" -> {
+                Question q = (Question) theEvent.getNewValue();
+                myQuestionPanel.displayQuestion(q);
+            }
+
+            case "ANSWER_RESULT" -> {
+                boolean correct = (boolean) theEvent.getNewValue();
+                myQuestionPanel.showResult(correct);
+            }
+
+            case "GAME_OVER" -> {
+                GameStatus status = (GameStatus) theEvent.getNewValue();
+                showMessage(status == GameStatus.WON
+                        ? "You reached the exit! You win!"
+                        : "No paths remain. Game over.");
+            }
+
+            case "INVALID_MOVE" -> {
+                showMessage("Invalid move.");
+            }
+        }
+    }
+
+    /**
+     * Asks the controller which directions are currently available
+     * and updates the control panel buttons accordingly.
+     * Controller queries the model — GuiView never touches GameState directly.
+     */
+    private void updateDirectionButtons() {
+        for (Direction dir : Direction.values()) {
+            boolean enabled = myController.isDirectionAvailable(dir);
+            myControlPanel.enableDirection(dir, enabled);
+        }
     }
 
     /**
