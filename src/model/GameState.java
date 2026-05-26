@@ -1,9 +1,5 @@
 package model;
 
-import model.Direction;
-import model.Maze;
-import model.Position;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;

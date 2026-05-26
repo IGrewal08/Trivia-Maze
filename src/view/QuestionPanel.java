@@ -3,8 +3,6 @@ package view;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.GameController;
-import model.GameState;
 import model.MultipleChoiceQuestion;
 import model.Question;
 

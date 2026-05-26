@@ -45,9 +45,6 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
     /** Default frame height in pixels. */
     private static final int FRAME_HEIGHT = 700;
 
-    /** The active game state, shared with every panel. */
-    private final GameState myState;
-
     /** Status banner shown across the top of the frame. */
     private JLabel myStatusLabel;
 
@@ -67,12 +64,8 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
      * @param theState the active GameState; must not be null
      * @throws IllegalArgumentException if theState is null
      */
-    public GuiView(final GameState theState) {
+    public GuiView() {
         super();
-        if (theState == null) {
-            throw new IllegalArgumentException("GameState must not be null.");
-        }
-        myState = theState;
         initialize();
     }
 

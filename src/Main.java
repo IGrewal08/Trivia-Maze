@@ -12,7 +12,7 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new Thread(DatabaseManager::disconnect));
 
         GameState state = new GameState(8, 8);
-        GuiView view = new GuiView(state);
+        GuiView view = new GuiView();
 
         GameController controller = new GameController(state, view);
         view.setController(controller);

@@ -9,15 +9,12 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
 import controller.GameController;
 import model.Direction;
 import model.Door;
-import model.GameState;
 import model.Room;
 
 /**

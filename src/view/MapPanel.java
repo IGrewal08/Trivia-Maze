@@ -5,14 +5,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Set;
 
 import javax.swing.JPanel;
 
 import controller.GameController;
-import model.GameState;
 import model.Maze;
 import model.Position;
 
