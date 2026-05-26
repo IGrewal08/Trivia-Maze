@@ -1,7 +1,13 @@
 package controller;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
+import db.DatabaseManager;
 import model.*;
 import view.GameView;
 
@@ -52,7 +58,7 @@ public class GameController {
         }
 
         Door door = myState.getMaze().getRoom(currPos).getDoor(theDir);
-        
+
         Room currentRoom = myState.getMaze().getRoom(currPos);
         System.out.println("Doors in current room " + currPos + ": " + currentRoom.toString());
 
@@ -157,6 +163,30 @@ public class GameController {
             throw new IllegalArgumentException("Maze width/height must be non-negative.");
         }
         myState = new GameState(theWidth, theHeight);
+        myState = new GameState(theWidth, theHeight);
+
+        List<Question> questions = new ArrayList<>();
+        try {
+            ResultSet rs = DatabaseManager.getAllQuestions();
+            while (rs.next()) {
+                questions.add(QuestionFactory.buildQuestion(rs.getInt("id")));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.err.println("Failed to load questions: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("Questions loaded: " + questions.size());  // ← add this
+        myState.getMaze().fillRoomsWithQuestions(questions, new Random());
+
+        // Verify doors were actually wired
+        Room startRoom = myState.getMaze().getRoom(new Position(0, 0));
+        System.out.println("Start room doors after fill: " + startRoom.toString()); // ← add this
+
+        myState.setCurrentPosition(myState.getMaze().getEntrance());
+        myState.firePropertyChange("MAZE_UPDATED", null, myState.getMaze());
+        System.out.println("New game started: " + theWidth + "x" + theHeight);
     }
 
     /**
@@ -186,7 +216,7 @@ public class GameController {
      */
     public void exitGame() {
         saveGame("GameSave"); // will overwrite any other game save with same name
-        //myView.closeWindow();
+        myView.closeGame();
     }
 
 	/**

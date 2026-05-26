@@ -183,6 +183,14 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
     }
 
     /**
+     * Closes JFrame ending the game.
+     */
+    @Override
+    public void closeGame() {
+        dispose();
+    }
+
+    /**
      * Full-frame repaint and layout pass. Each panel already repaints
      * itself in response to property change events, so this exists as a
      * safety net for callers that want a global refresh.

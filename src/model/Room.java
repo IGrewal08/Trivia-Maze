@@ -125,7 +125,7 @@ public class Room implements Serializable {
      * @return the current state of this room (X, Y, doors, visited)
      */
     public String toString() {
-        return String.format("Room [X=%b, Y=%b, doors=%b, visited=%b]",
+        return String.format("Room [X=%b, Y=%b, doors=%s, visited=%b]",
             myX, myY, myDoors.toString(), myIsVisited);
     }
 }

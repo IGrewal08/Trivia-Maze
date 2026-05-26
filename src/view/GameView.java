@@ -39,4 +39,9 @@ public interface GameView {
      * @param theController the controller connecting this view to it's model
      */
     public void setController(final GameController theController);
+
+    /**
+     * Function to close JFrame ending the Trivia Maze application
+     */
+    public void closeGame();
 }
