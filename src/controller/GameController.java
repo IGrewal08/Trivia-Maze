@@ -10,6 +10,7 @@ import java.util.Set;
 import db.DatabaseManager;
 import model.*;
 import view.GameView;
+import view.GuiView;
 
 /**
  * Controller to connect the Trivia Maze's view to it's model and database by validating
@@ -37,6 +38,7 @@ public class GameController {
         }
         this.myState = theState;
         this.myView = theView;
+        this.myState.addPropertyChangeListener(theView);
     }
 
     public void handleMove(final Direction theDir) {
@@ -162,7 +164,6 @@ public class GameController {
         if (theWidth < 0 || theHeight < 0) {
             throw new IllegalArgumentException("Maze width/height must be non-negative.");
         }
-        myState = new GameState(theWidth, theHeight);
         myState = new GameState(theWidth, theHeight);
 
         List<Question> questions = new ArrayList<>();

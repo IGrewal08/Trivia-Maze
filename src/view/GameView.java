@@ -1,5 +1,7 @@
 package view;
 
+import java.beans.PropertyChangeListener;
+
 import controller.GameController;
 import model.Question;
 
@@ -10,7 +12,7 @@ import model.Question;
  * @author Inderdeep Grewal
  * @version 1.0
  */
-public interface GameView {
+public interface GameView extends PropertyChangeListener {
 
     /**
      * method to initialize all GUI component to build the JFrame

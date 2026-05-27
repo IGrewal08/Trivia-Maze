@@ -185,7 +185,7 @@ public class RoomPanel extends JPanel {
             symbol = "?";
         } else {
             fill = LOCKED_DOOR_COLOR;
-            symbol = null;
+            symbol = "!";
         }
 
         theGraphics.setColor(fill);
@@ -259,8 +259,12 @@ public class RoomPanel extends JPanel {
         for (final Direction dir : Direction.values()) {
             if (myRoom.getDoor(dir) != null
                     && doorRect(dir).contains(thePixelX, thePixelY)) {
-                myController.handleMove(dir);
-                return;
+                Door door = myRoom.getDoor(dir);
+                if (door != null && !door.isBlocked() 
+                    && doorRect(dir).contains(thePixelX, thePixelY)) {
+                    myController.handleMove(dir);
+                    return;
+                }
             }
         }
     }

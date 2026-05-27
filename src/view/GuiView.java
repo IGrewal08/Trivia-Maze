@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -106,6 +107,8 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
         myQuestionPanel = new QuestionPanel(myController);
         myControlPanel = new ControlPanel(myController);
 
+        myControlPanel.registerKeyBindings(this);
+
         add(wrap(myMapPanel), BorderLayout.WEST);
         add(wrap(myRoomPanel), BorderLayout.CENTER);
         add(wrap(myQuestionPanel), BorderLayout.EAST);
@@ -158,10 +161,12 @@ public class GuiView extends JFrame implements GameView, PropertyChangeListener 
             }
 
             case "GAME_OVER" -> {
+                for (Direction dir: Direction.values())
+                    myControlPanel.enableDirection(dir, false);
                 GameStatus status = (GameStatus) theEvent.getNewValue();
-                showMessage(status == GameStatus.WON
-                        ? "You reached the exit! You win!"
-                        : "No paths remain. Game over.");
+                JOptionPane.showMessageDialog(this,
+                    status == GameStatus.WON ? "You Win!" : "No paths remain. Game over.",
+                    "Game Over", JOptionPane.INFORMATION_MESSAGE);
             }
 
             case "INVALID_MOVE" -> {

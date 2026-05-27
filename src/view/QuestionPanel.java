@@ -130,6 +130,10 @@ public class QuestionPanel extends JPanel {
 
         revalidate();
         repaint();
+
+        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> showIdleState());
+        timer.setRepeats(false);
+        timer.start();
     }
 
     /**
@@ -251,10 +255,11 @@ public class QuestionPanel extends JPanel {
      * @param theAnswer the answer to submit
      */
     private void submitAnswer(final String theAnswer) {
-        if (theAnswer == null || theAnswer.isBlank()) {
+        if (myQuestion == null || theAnswer == null || theAnswer.isBlank()) {
             return;
         }
         myController.handleAnswer(theAnswer);
+        myQuestion = null;
     }
 
     /**
