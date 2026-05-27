@@ -3,7 +3,6 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,7 +37,7 @@ import model.Question;
  * @author Nicholas Cortes
  * @version 2.0
  */
-public class GuiView extends JFrame implements GameView, PropertyChangeListener {
+public class GuiView extends JFrame implements GameView {
 
     /** Default frame width in pixels. */
     private static final int FRAME_WIDTH = 1200;

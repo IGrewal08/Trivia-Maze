@@ -64,7 +64,7 @@ public class GameSaver {
      */
     public static GameState getSave(final String theFileName) {
         
-        if (theFileName.isBlank() || theFileName == null) {
+        if (theFileName == null || theFileName.isBlank()) {
             throw new IllegalArgumentException("Load file name must not be empty.");
         }
 
@@ -75,7 +75,7 @@ public class GameSaver {
             return null;
         }
 
-        try (FileInputStream fileIn = new FileInputStream(theFileName);
+        try (FileInputStream fileIn = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(fileIn)) {
 
                 final GameState fetchState =  (GameState) in.readObject();

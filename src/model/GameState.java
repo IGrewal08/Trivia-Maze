@@ -43,7 +43,8 @@ public class GameState implements Serializable {
     public GameState(final int theWidth, final int theHeight) {
 
         myMaze = new Maze(theWidth, theHeight);
-        myCurrentPosition = new Position(0, 0);
+        myCurrentPosition = myMaze.getEntrance(); // dynamic start instead of 0,0
+        //myCurrentPosition = new Position(0, 0); 
         myCurrentDirection = Direction.NORTH;
 
         myVisitedRooms = new HashSet<>();

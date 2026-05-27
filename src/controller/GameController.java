@@ -1,16 +1,11 @@
 package controller;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import db.DatabaseManager;
 import model.*;
 import view.GameView;
-import view.GuiView;
 
 /**
  * Controller to connect the Trivia Maze's view to it's model and database by validating
@@ -75,6 +70,9 @@ public class GameController {
             myState.addVisitedRoom(newPos);
             myView.showMessage("Moved " + theDir + " to " + newPos);
             myState.firePropertyChange("PLAYER_MOVED", null, newPos);
+            if (newPos.equals(myState.getMaze().getExit())) {
+                myState.firePropertyChange("GAME_OVER", null, GameStatus.WON);
+            }
         } else if (door.isLocked()) {
             myState.setCurrentDirection(theDir);
             myView.showMessage("Door is locked. Answer the question to move " + theDir + ".");
@@ -91,7 +89,7 @@ public class GameController {
      * @param theAnswer the answer given from the player.
      */
     public void handleAnswer(final String theAnswer) {
-        if (theAnswer.isBlank() || theAnswer == null) {
+        if (theAnswer == null || theAnswer.isBlank()) {
             throw new IllegalArgumentException("Player answer must not be blank or null.");
         }
         Direction dir = myState.getCurrentDirection();
@@ -103,6 +101,10 @@ public class GameController {
         if (door.attemptUnlock(theAnswer)) {
             door.unlock();
             myState.setCurrentPosition(newPos);
+            if (newPos.equals(getMaze().getExit())) {
+                myState.firePropertyChange("GAME_OVER", null, GameStatus.WON);
+                return;
+            }
             myState.addVisitedRoom(newPos);
             myState.firePropertyChange("PLAYER_MOVED", null, newPos);
             myState.firePropertyChange("ANSWER_RESULT", null, true);
@@ -165,25 +167,17 @@ public class GameController {
             throw new IllegalArgumentException("Maze width/height must be non-negative.");
         }
         myState = new GameState(theWidth, theHeight);
+        myState.addPropertyChangeListener(myView);
 
-        List<Question> questions = new ArrayList<>();
-        try {
-            ResultSet rs = DatabaseManager.getAllQuestions();
-            while (rs.next()) {
-                questions.add(QuestionFactory.buildQuestion(rs.getInt("id")));
-            }
-            rs.close();
-        } catch (SQLException e) {
-            System.err.println("Failed to load questions: " + e.getMessage());
-            return;
-        }
+        int needed = (theWidth - 1) * theHeight + theWidth * (theHeight -1);
+        List<Question> questions = QuestionFactory.getRandomQuestions(needed);
 
-        System.out.println("Questions loaded: " + questions.size());  // ← add this
+        System.out.println("Questions loaded: " + questions.size());
         myState.getMaze().fillRoomsWithQuestions(questions, new Random());
 
         // Verify doors were actually wired
         Room startRoom = myState.getMaze().getRoom(new Position(0, 0));
-        System.out.println("Start room doors after fill: " + startRoom.toString()); // ← add this
+        System.out.println("Start room doors after fill: " + startRoom.toString());
 
         myState.setCurrentPosition(myState.getMaze().getEntrance());
         myState.firePropertyChange("MAZE_UPDATED", null, myState.getMaze());
@@ -206,10 +200,15 @@ public class GameController {
      * @param theFileName name to search for the saved file to be loaded from.
      */
     public void loadGame(final String theFileName) {
-        if (theFileName.equals("")) {
+        if (theFileName == null || theFileName.isBlank()) {
             throw new IllegalArgumentException("Load file name must not be empty.");
         }
-        GameSaver.getSave(theFileName);
+        GameState loaded = GameSaver.getSave(theFileName);
+        if (loaded != null) {
+            myState = loaded;
+            myState.addPropertyChangeListener(myView);
+            myState.firePropertyChange("MAZE_UPDATED", null, myState.getMaze());
+        }
     }
 
     /**

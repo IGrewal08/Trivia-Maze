@@ -10,12 +10,11 @@ public class Main {
         DatabaseManager.connect();
         Runtime.getRuntime().addShutdownHook(new Thread(DatabaseManager::disconnect));
 
-        GameState state = new GameState(8, 8);
         GuiView view = new GuiView();
+        GameController controller = new GameController(new GameState(8, 8), view);
 
-        GameController controller = new GameController(state, view);
         view.setController(controller);
-
+        controller.newGame(8, 8);
         view.setVisible(true);
     }
 }
