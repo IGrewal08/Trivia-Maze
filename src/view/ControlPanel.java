@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -98,6 +99,25 @@ public class ControlPanel extends JPanel {
             throw new IllegalArgumentException("Must pass in a valid direction.");
         }
         myDirectionButtons.get(theDir).setEnabled(theEnable);
+    }
+
+    /**
+     * Disable or enable WASD/arrow key bindings through iteration.
+     * 
+     * @param theFrame the current frame for the application
+     * @param theEnable boolean type true to enable, false to disable
+     */
+    public void setKeyBindingsEnabled(final JFrame theFrame, final boolean theEnabled) {
+        final String[] actionKeys = { "moveNorth", "moveSouth", "moveWest", "moveEast" };
+        for (final String key : actionKeys) {
+            final Action action = theFrame.getRootPane().getActionMap().get(key);
+            if (action != null) {
+                action.setEnabled(theEnabled);
+            }
+        }
+        for (final JButton button: myDirectionButtons.values()) {
+            button.setEnabled(theEnabled);
+        }
     }
 
     /**

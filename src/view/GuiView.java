@@ -151,12 +151,14 @@ public class GuiView extends JFrame implements GameView {
             case "QUESTION_ASKED" -> {
                 Question q = (Question) theEvent.getNewValue();
                 myQuestionPanel.displayQuestion(q);
+                myControlPanel.setKeyBindingsEnabled(this, false);
             }
 
             case "ANSWER_RESULT" -> {
                 boolean correct = (boolean) theEvent.getNewValue();
                 myQuestionPanel.showResult(correct);
                 myRoomPanel.refreshRoom();
+                myControlPanel.setKeyBindingsEnabled(this, true);
             }
 
             case "GAME_OVER" -> {

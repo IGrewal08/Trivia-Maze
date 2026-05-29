@@ -131,9 +131,11 @@ public class QuestionPanel extends JPanel {
         revalidate();
         repaint();
 
+        /*
         javax.swing.Timer timer = new javax.swing.Timer(1500, e -> showIdleState());
         timer.setRepeats(false);
         timer.start();
+        */
     }
 
     /**
