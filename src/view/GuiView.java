@@ -128,6 +128,11 @@ public class GuiView extends JFrame implements GameView {
         return wrapper;
     }
 
+    /**
+     * Dedicates method call depending on which even was fired, servers as the connecting point for all components in the application.
+     * 
+     * @param theEvent the fired event
+     */
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
         if (myMapPanel == null || myQuestionPanel == null) {
@@ -162,12 +167,21 @@ public class GuiView extends JFrame implements GameView {
             }
 
             case "GAME_OVER" -> {
+                final String[]choices = {"Play Again", "Quit" };
                 for (Direction dir: Direction.values())
                     myControlPanel.enableDirection(dir, false);
                 GameStatus status = (GameStatus) theEvent.getNewValue();
-                JOptionPane.showMessageDialog(this,
+                final int res = JOptionPane.showOptionDialog(this,
                     status == GameStatus.WON ? "You Win!" : "No paths remain. Game over.",
-                    "Game Over", JOptionPane.INFORMATION_MESSAGE);
+                    "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[0]);
+                if (res == 0) {
+                    myController.newGame(8, 8);
+                    myControlPanel.setKeyBindingsEnabled(this, true);
+                    myQuestionPanel.showIdleState();
+                    showMessage("New Game Started!");
+                } else {
+                    this.closeGame();
+                }
             }
 
             case "INVALID_MOVE" -> {

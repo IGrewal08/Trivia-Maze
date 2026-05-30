@@ -53,7 +53,7 @@ public class DatabaseManager {
      * Intended for Schema to create schema for database at a selected location.
      * @return db path string
      */
-    public static String getDBPath() {
+    protected static String getDBPath() {
         return DB_PATH;
     }
 

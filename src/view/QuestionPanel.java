@@ -131,11 +131,6 @@ public class QuestionPanel extends JPanel {
         revalidate();
         repaint();
 
-        /*
-        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> showIdleState());
-        timer.setRepeats(false);
-        timer.start();
-        */
     }
 
     /**
@@ -218,7 +213,7 @@ public class QuestionPanel extends JPanel {
         add(falseButton);
     }
 
-        /**
+    /**
      * Adds the reusable answer field and a Submit button that forwards
      * the field's current text.
      */
@@ -268,7 +263,7 @@ public class QuestionPanel extends JPanel {
      * Shows the idle "no active question" state. Used at construction
      * and any time the panel needs to clear back to the resting view.
      */
-    private void showIdleState() {
+    public void showIdleState() {
         removeAll();
         final JLabel idle = new JLabel("No active question.",
                 SwingConstants.CENTER);
@@ -277,4 +272,5 @@ public class QuestionPanel extends JPanel {
         revalidate();
         repaint();
     }
+
 }

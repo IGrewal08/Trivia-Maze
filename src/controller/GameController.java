@@ -36,6 +36,12 @@ public class GameController {
         this.myState.addPropertyChangeListener(theView);
     }
 
+    /**
+     * Handles any move preformed by the player before calling the model to update state or the view to repaint GUI.
+     * 
+     * @param theDir the direction being moved to by the player
+     * @throws IllegalArgumentException if the Direction moved is null
+     */
     public void handleMove(final Direction theDir) {
         if (theDir == null) {
             throw new IllegalArgumentException("Direction within handleMove must not be null.");
