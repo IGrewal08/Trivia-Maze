@@ -92,6 +92,7 @@ public class QuestionPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        setBackground(UiTheme.SURFACE);
 
         showIdleState();
     }
@@ -122,10 +123,11 @@ public class QuestionPanel extends JPanel {
         myQuestion = null;
 
         final JLabel verdict = new JLabel(
-                theCorrect ? "Correct!" : "Incorrect.",
-                SwingConstants.CENTER);
+                theCorrect ? "Correct!  Door unlocked." : "Incorrect.  Door blocked.",
+                SwingConstants.LEFT);
         verdict.setAlignmentX(Component.LEFT_ALIGNMENT);
-        verdict.setFont(PROMPT_FONT);
+        verdict.setFont(UiTheme.HEADING);
+        verdict.setForeground(theCorrect ? UiTheme.SUCCESS : UiTheme.DANGER);
         add(verdict);
 
         revalidate();
@@ -146,9 +148,10 @@ public class QuestionPanel extends JPanel {
         prompt.setWrapStyleWord(true);
         prompt.setOpaque(false);
         prompt.setFont(PROMPT_FONT);
+        prompt.setForeground(UiTheme.TEXT);
         prompt.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(prompt);
-        add(Box.createVerticalStrut(10));
+        add(Box.createVerticalStrut(12));
 
         myOptionButtons.clear();
 
@@ -178,12 +181,16 @@ public class QuestionPanel extends JPanel {
         for (final String option : options) {
             final JRadioButton button = new JRadioButton(option);
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
+            button.setOpaque(false);
+            button.setFont(UiTheme.BODY);
+            button.setForeground(UiTheme.TEXT);
             group.add(button);
             myOptionButtons.add(button);
             add(button);
         }
 
         final JButton submit = new JButton("Submit");
+        UiTheme.styleButton(submit, true);
         submit.setAlignmentX(Component.LEFT_ALIGNMENT);
         submit.addActionListener(e -> {
             for (final JRadioButton button : myOptionButtons) {
@@ -193,7 +200,7 @@ public class QuestionPanel extends JPanel {
                 }
             }
         });
-        add(Box.createVerticalStrut(6));
+        add(Box.createVerticalStrut(10));
         add(submit);
     }
 
@@ -204,12 +211,14 @@ public class QuestionPanel extends JPanel {
     private void addTrueFalseWidgets() {
         final JButton trueButton = new JButton("True");
         final JButton falseButton = new JButton("False");
+        UiTheme.styleButton(trueButton, true);
+        UiTheme.styleButton(falseButton, false);
         trueButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         falseButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         trueButton.addActionListener(e -> submitAnswer("true"));
         falseButton.addActionListener(e -> submitAnswer("false"));
         add(trueButton);
-        add(Box.createVerticalStrut(4));
+        add(Box.createVerticalStrut(6));
         add(falseButton);
     }
 
@@ -219,15 +228,22 @@ public class QuestionPanel extends JPanel {
      */
     private void addShortAnswerWidgets() {
         myAnswerField.setText("");
+        myAnswerField.setFont(UiTheme.BODY);
         myAnswerField.setMaximumSize(
                 new Dimension(Integer.MAX_VALUE, myAnswerField.getPreferredSize().height));
         myAnswerField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Submit on Enter for a smoother typing flow.
+        for (final java.awt.event.ActionListener existing : myAnswerField.getActionListeners()) {
+            myAnswerField.removeActionListener(existing);
+        }
+        myAnswerField.addActionListener(e -> submitAnswer(myAnswerField.getText()));
         add(myAnswerField);
 
         final JButton submit = new JButton("Submit");
+        UiTheme.styleButton(submit, true);
         submit.setAlignmentX(Component.LEFT_ALIGNMENT);
         submit.addActionListener(e -> submitAnswer(myAnswerField.getText()));
-        add(Box.createVerticalStrut(6));
+        add(Box.createVerticalStrut(10));
         add(submit);
     }
     
@@ -239,6 +255,7 @@ public class QuestionPanel extends JPanel {
      */
     private JButton buildSkipButton() {
         final JButton skip = new JButton("Skip");
+        UiTheme.styleButton(skip, false);
         skip.setAlignmentX(Component.LEFT_ALIGNMENT);
         skip.addActionListener(e -> submitAnswer(Question.SKIP));
         return skip;
@@ -265,9 +282,11 @@ public class QuestionPanel extends JPanel {
      */
     public void showIdleState() {
         removeAll();
-        final JLabel idle = new JLabel("No active question.",
-                SwingConstants.CENTER);
+        final JLabel idle = new JLabel("Move toward a locked door to draw a question.",
+                SwingConstants.LEFT);
         idle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        idle.setFont(UiTheme.BODY);
+        idle.setForeground(UiTheme.TEXT_MUTED);
         add(idle);
         revalidate();
         repaint();

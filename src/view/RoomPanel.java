@@ -49,28 +49,28 @@ public class RoomPanel extends JPanel {
     private static final int WALL_STROKE = 4;
 
     /** Background color of the panel. */
-    private static final Color BACKGROUND_COLOR = new Color(40, 40, 40);
+    private static final Color BACKGROUND_COLOR = UiTheme.SURFACE;
 
     /** Fill color of the room floor. */
-    private static final Color FLOOR_COLOR = new Color(230, 220, 190);
+    private static final Color FLOOR_COLOR = UiTheme.FLOOR;
 
     /** Color of the room's walls. */
-    private static final Color WALL_COLOR = new Color(60, 40, 20);
+    private static final Color WALL_COLOR = UiTheme.TEXT;
 
     /** Fill color used for a door that is open. */
-    private static final Color OPEN_DOOR_COLOR = new Color(80, 170, 90);
+    private static final Color OPEN_DOOR_COLOR = UiTheme.SUCCESS;
 
     /** Fill color used for a door that is permanently blocked. */
-    private static final Color BLOCKED_DOOR_COLOR = new Color(190, 70, 70);
+    private static final Color BLOCKED_DOOR_COLOR = UiTheme.DANGER;
 
     /** Fill color used for a door that is still locked. */
-    private static final Color LOCKED_DOOR_COLOR = new Color(170, 170, 170);
+    private static final Color LOCKED_DOOR_COLOR = UiTheme.WARNING;
 
     /** Color used for the symbol drawn on locked/blocked doors. */
-    private static final Color DOOR_SYMBOL_COLOR = Color.BLACK;
+    private static final Color DOOR_SYMBOL_COLOR = Color.WHITE;
 
     /** Color used for the small coordinate label. */
-    private static final Color LABEL_COLOR = new Color(80, 60, 30);
+    private static final Color LABEL_COLOR = UiTheme.TEXT_MUTED;
 
     /** Controller used to forward door-click move attempts. */
     private final GameController myController;

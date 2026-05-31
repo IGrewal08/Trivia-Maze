@@ -32,32 +32,35 @@ public class MapPanel extends JPanel {
     /** Pixel margin around the grid. */
     private static final int MARGIN = 10;
 
+    /** Vertical space reserved below the grid for the legend. */
+    private static final int LEGEND_HEIGHT = 88;
+
     /** Inset, in pixels, between the player marker and the cell edge. */
     private static final int PLAYER_INSET = 12;
 
     /** Background color of the panel. */
-    private static final Color BACKGROUND_COLOR = new Color(40, 40, 40);
+    private static final Color BACKGROUND_COLOR = UiTheme.SURFACE;
 
     /** Fill color for rooms that have not been visited. */
-    private static final Color UNVISITED_COLOR = new Color(80, 80, 80);
+    private static final Color UNVISITED_COLOR = UiTheme.ROOM_UNVISITED;
 
     /** Fill color for rooms the player has already visited. */
-    private static final Color VISITED_COLOR = new Color(150, 200, 230);
+    private static final Color VISITED_COLOR = UiTheme.ROOM_VISITED;
 
     /** Fill color for the player's current room. */
-    private static final Color CURRENT_ROOM_COLOR = new Color(255, 230, 130);
+    private static final Color CURRENT_ROOM_COLOR = UiTheme.ROOM_CURRENT;
 
     /** Color used to draw the grid lines between rooms. */
-    private static final Color GRID_LINE_COLOR = Color.BLACK;
+    private static final Color GRID_LINE_COLOR = UiTheme.BORDER;
 
     /** Color used to draw the entrance marker. */
-    private static final Color ENTRANCE_COLOR = new Color(60, 160, 90);
+    private static final Color ENTRANCE_COLOR = UiTheme.SUCCESS;
 
     /** Color used to draw the exit marker. */
-    private static final Color EXIT_COLOR = new Color(200, 70, 70);
+    private static final Color EXIT_COLOR = UiTheme.DANGER;
 
     /** Color used to draw the player marker. */
-    private static final Color PLAYER_COLOR = new Color(20, 60, 200);
+    private static final Color PLAYER_COLOR = UiTheme.PRIMARY_DARK;
 
     /** Controller queried for position, visited rooms, and maze. */
     private final GameController myController;
@@ -92,7 +95,7 @@ public class MapPanel extends JPanel {
         myVisited    = myController.getVisitedRooms();
 
         final int width  = myMaze.getWidth()  * CELL_SIZE + 2 * MARGIN;
-        final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN;
+        final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN + LEGEND_HEIGHT;
         setPreferredSize(new Dimension(width, height));
         setBackground(BACKGROUND_COLOR);
     }
@@ -104,7 +107,7 @@ public class MapPanel extends JPanel {
 
         // Recalculate preferred size in case maze dimensions changed
         final int width  = myMaze.getWidth()  * CELL_SIZE + 2 * MARGIN;
-        final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN;
+        final int height = myMaze.getHeight() * CELL_SIZE + 2 * MARGIN + LEGEND_HEIGHT;
         setPreferredSize(new Dimension(width, height));
 
         revalidate();
@@ -156,19 +159,24 @@ public class MapPanel extends JPanel {
             }
         }
 
-        // Draw player marker on top of current room
+        // Draw player marker on top of current room, with a white ring so
+        // it stays visible against the highlighted current-room fill.
         final int playerX        = MARGIN + myCurrentPos.getX() * CELL_SIZE + PLAYER_INSET;
         final int playerY        = MARGIN + myCurrentPos.getY() * CELL_SIZE + PLAYER_INSET;
         final int playerDiameter = CELL_SIZE - 2 * PLAYER_INSET;
+        g2.setColor(Color.WHITE);
+        g2.fillOval(playerX - 2, playerY - 2, playerDiameter + 4, playerDiameter + 4);
         g2.setColor(PLAYER_COLOR);
         g2.fillOval(playerX, playerY, playerDiameter, playerDiameter);
+
+        drawLegend(g2);
 
         g2.dispose();
     }
 
     /**
-     * Draws a single-character label in the upper-left of a cell, used
-     * to mark the entrance and exit rooms.
+     * Draws a single-character label centered in a cell, used to mark the
+     * entrance and exit rooms.
      *
      * @param theGraphics the graphics context
      * @param theLabel the label text to draw
@@ -182,6 +190,43 @@ public class MapPanel extends JPanel {
                            final int thePixelX,
                            final int thePixelY) {
         theGraphics.setColor(theColor);
-        theGraphics.drawString(theLabel, thePixelX + 6, thePixelY + 16);
+        theGraphics.setFont(UiTheme.BODY_BOLD);
+        theGraphics.drawString(theLabel, thePixelX + CELL_SIZE / 2 - 5,
+                thePixelY + CELL_SIZE / 2 + 6);
+    }
+
+    /**
+     * Draws a compact legend beneath the grid so the player can read what
+     * the colors and markers mean.
+     *
+     * @param theGraphics the graphics context
+     */
+    private void drawLegend(final Graphics2D theGraphics) {
+        final int top = MARGIN + myMaze.getHeight() * CELL_SIZE + MARGIN + 6;
+        final int rowH = 18;
+        final int col2 = 130;
+
+        theGraphics.setFont(UiTheme.CAPTION);
+
+        legendEntry(theGraphics, "You",       PLAYER_COLOR,       MARGIN, top);
+        legendEntry(theGraphics, "Current",   CURRENT_ROOM_COLOR, MARGIN, top + rowH);
+        legendEntry(theGraphics, "Visited",   VISITED_COLOR,      MARGIN, top + 2 * rowH);
+        legendEntry(theGraphics, "S = Start", ENTRANCE_COLOR,     MARGIN + col2, top);
+        legendEntry(theGraphics, "E = Exit",  EXIT_COLOR,         MARGIN + col2, top + rowH);
+        legendEntry(theGraphics, "Unvisited", UNVISITED_COLOR,    MARGIN + col2, top + 2 * rowH);
+    }
+
+    /**
+     * Draws one legend row: a colored swatch followed by its label.
+     */
+    private void legendEntry(final Graphics2D theGraphics, final String theLabel,
+                             final Color theColor, final int theX, final int theY) {
+        final int swatch = 12;
+        theGraphics.setColor(theColor);
+        theGraphics.fillRect(theX, theY, swatch, swatch);
+        theGraphics.setColor(GRID_LINE_COLOR);
+        theGraphics.drawRect(theX, theY, swatch, swatch);
+        theGraphics.setColor(UiTheme.TEXT_MUTED);
+        theGraphics.drawString(theLabel, theX + swatch + 6, theY + swatch - 1);
     }
 }

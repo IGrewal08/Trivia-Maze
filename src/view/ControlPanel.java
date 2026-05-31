@@ -65,6 +65,8 @@ public class ControlPanel extends JPanel {
     private void buildButtons() {
         for (Direction dir: myDirectionButtons.keySet()) {
             JButton button = myDirectionButtons.get(dir);
+            UiTheme.styleButton(button, true);
+            button.setPreferredSize(new java.awt.Dimension(96, 40));
             button.addActionListener(e -> myController.handleMove(dir));
         }
     }
@@ -73,18 +75,30 @@ public class ControlPanel extends JPanel {
      * Arranges the four directional button in a cross layout.
      */
     private void setButtonsLayout() {
-        setLayout(new GridLayout(3, 3));
+        setLayout(new GridLayout(3, 3, 8, 8));
+        setBackground(UiTheme.SURFACE);
 
-        add(new JPanel());
+        add(spacer());
         add(myDirectionButtons.get(Direction.NORTH));
-        add(new JPanel());
+        add(spacer());
         add(myDirectionButtons.get(Direction.WEST));
-        add(new JPanel());
+        add(spacer());
         add(myDirectionButtons.get(Direction.EAST));
-        add(new JPanel());
+        add(spacer());
         add(myDirectionButtons.get(Direction.SOUTH));
-        add(new JPanel());
+        add(spacer());
+    }
 
+    /**
+     * Creates a transparent spacer cell so the card surface shows through
+     * the empty corners of the directional cross.
+     *
+     * @return a non-opaque filler panel
+     */
+    private static JPanel spacer() {
+        final JPanel filler = new JPanel();
+        filler.setOpaque(false);
+        return filler;
     }
 
     /**
