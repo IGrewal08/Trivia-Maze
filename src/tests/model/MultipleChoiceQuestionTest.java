@@ -102,6 +102,25 @@ public class MultipleChoiceQuestionTest {
     }
 
     @Test
+    void testGetHintReturnsStoredHint() {
+        final MultipleChoiceQuestion question = new MultipleChoiceQuestion(
+            5,
+            "Pick a primary color.",
+            2,
+            "red",
+            Arrays.asList("red", "blue", "green", "yellow"),
+            "Think about basic color categories."
+        );
+
+        assertEquals("Think about basic color categories.", question.getHint());
+    }
+
+    @Test
+    void testGetHintUsesFallbackWhenMissing() {
+        assertEquals("No hint available for this question.", myQuestion.getHint());
+    }
+
+    @Test
     void testGetOptionsIsDefensiveCopy() {
         final List<String> returned = myQuestion.getOptions();
         assertThrows(UnsupportedOperationException.class,

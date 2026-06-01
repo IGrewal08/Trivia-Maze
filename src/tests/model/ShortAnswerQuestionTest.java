@@ -80,4 +80,22 @@ public class ShortAnswerQuestionTest {
     void testGetQuestionType() {
         assertEquals(QuestionType.SHORT_ANSWER, myQuestion.getQuestionType());
     }
+
+    @Test
+    void testGetHintReturnsStoredHint() {
+        final ShortAnswerQuestion question = new ShortAnswerQuestion(
+            4,
+            "Name a primary color.",
+            1,
+            "red",
+            "Think of a basic warm color."
+        );
+
+        assertEquals("Think of a basic warm color.", question.getHint());
+    }
+
+    @Test
+    void testGetHintUsesFallbackWhenMissing() {
+        assertEquals("No hint available for this question.", myQuestion.getHint());
+    }
 }

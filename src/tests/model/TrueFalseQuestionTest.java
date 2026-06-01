@@ -101,6 +101,24 @@ public class TrueFalseQuestionTest {
     }
 
     @Test
+    void testGetHintReturnsStoredHint() {
+        final TrueFalseQuestion question = new TrueFalseQuestion(
+            12,
+            "The sky is blue.",
+            1,
+            "true",
+            "Consider the usual daytime appearance."
+        );
+
+        assertEquals("Consider the usual daytime appearance.", question.getHint());
+    }
+
+    @Test
+    void testGetHintUsesFallbackWhenMissing() {
+        assertEquals("No hint available for this question.", myTrueQuestion.getHint());
+    }
+
+    @Test
     void testGetCorrectAnswerReturnsCanonical() {
         assertEquals("true",
             new TrueFalseQuestion(10, "Q?", 1, "Yes").getCorrectAnswer());

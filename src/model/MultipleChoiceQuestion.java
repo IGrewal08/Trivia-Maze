@@ -41,7 +41,26 @@ public class MultipleChoiceQuestion extends Question {
     public MultipleChoiceQuestion(final int theId, final String theQuestion,
                                   final int theDifficulty, final String theAnswer,
                                   final List<String> theOptions) {
-        super(theId, theQuestion, theDifficulty);
+        this(theId, theQuestion, theDifficulty, theAnswer, theOptions, null);
+    }
+
+    /**
+     * Creates a new MultipleChoiceQuestion with hint text.
+     *
+     * @param theId unique identifier for this question
+     * @param theQuestion prompt text shown to the player
+     * @param theDifficulty difficulty rating (must be non-negative)
+     * @param theAnswer the correct answer (must equal one element of theOptions)
+     * @param theOptions the answer choices in display order (at least 2 entries)
+     * @param theHint hint text shown to the player
+     * @throws IllegalArgumentException if theAnswer is null or blank,
+     *         theOptions is null or has fewer than 2 entries, or theAnswer
+     *         is not contained in theOptions
+     */
+    public MultipleChoiceQuestion(final int theId, final String theQuestion,
+                                  final int theDifficulty, final String theAnswer,
+                                  final List<String> theOptions, final String theHint) {
+        super(theId, theQuestion, theDifficulty, theHint);
         if (theAnswer == null || theAnswer.isBlank()) {
             throw new IllegalArgumentException("Answer must not be null or blank.");
         }

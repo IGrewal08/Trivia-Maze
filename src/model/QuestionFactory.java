@@ -171,6 +171,7 @@ public final class QuestionFactory {
         final String typeRaw = theResults.getString("type");
         final String text = theResults.getString("text");
         final String answer = theResults.getString("answer");
+        final String hint = readHint(theResults);
         final String difficultyRaw = theResults.getString("difficulty");
 
         final Integer difficulty = DIFFICULTY.get(difficultyRaw);
@@ -186,11 +187,22 @@ public final class QuestionFactory {
         }
 
         return switch (type) {
-            case TRUE_FALSE -> new TrueFalseQuestion(id, text, difficulty, answer);
-            case SHORT_ANSWER -> new ShortAnswerQuestion(id, text, difficulty, answer);
+            case TRUE_FALSE -> new TrueFalseQuestion(id, text, difficulty, answer, hint);
+            case SHORT_ANSWER -> new ShortAnswerQuestion(id, text, difficulty, answer, hint);
             case MULTIPLE_CHOICE -> new MultipleChoiceQuestion(
-                    id, text, difficulty, answer, collectOptions(theResults));
+                    id, text, difficulty, answer, collectOptions(theResults), hint);
         };
+    }
+
+    /**
+     * Reads the hint column when present. Older databases may not have it yet.
+     */
+    private static String readHint(final ResultSet theResults) {
+        try {
+            return theResults.getString("hint");
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
     /**

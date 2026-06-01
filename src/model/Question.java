@@ -32,6 +32,9 @@ public abstract class Question implements Serializable {
     /** Difficulty rating of this question (higher means harder). */
     private final int myDifficulty;
 
+    /** Hint text shown when the player asks for help. */
+    private final String myHint;
+
     /**
      * Creates a new Question with the given id, prompt, and difficulty.
      *
@@ -42,6 +45,21 @@ public abstract class Question implements Serializable {
      *         or if theDifficulty is negative
      */
     public Question(final int theId, final String theQuestion, final int theDifficulty) {
+        this(theId, theQuestion, theDifficulty, null);
+    }
+
+    /**
+     * Creates a new Question with the given id, prompt, difficulty, and hint.
+     *
+     * @param theId unique identifier for this question
+     * @param theQuestion prompt text shown to the player
+     * @param theDifficulty difficulty rating (must be non-negative)
+     * @param theHint hint text shown to the player
+     * @throws IllegalArgumentException if theQuestion is null or blank,
+     *         or if theDifficulty is negative
+     */
+    public Question(final int theId, final String theQuestion,
+                    final int theDifficulty, final String theHint) {
         if (theQuestion == null || theQuestion.isBlank()) {
             throw new IllegalArgumentException("Question text must not be null or blank.");
         }
@@ -51,6 +69,9 @@ public abstract class Question implements Serializable {
         myId = theId;
         myQuestion = theQuestion;
         myDifficulty = theDifficulty;
+        myHint = theHint == null || theHint.isBlank()
+                ? "No hint available for this question."
+                : theHint;
     }
 
     /**
@@ -72,6 +93,13 @@ public abstract class Question implements Serializable {
      */
     public int getDifficulty() {
         return myDifficulty;
+    }
+
+    /**
+     * @return hint text suitable for display to the player
+     */
+    public String getHint() {
+        return myHint;
     }
 
     /**

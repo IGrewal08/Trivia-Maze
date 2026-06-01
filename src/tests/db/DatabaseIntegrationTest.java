@@ -1,9 +1,11 @@
 package tests.db;
 
+import db.Schema;
 import model.Direction;
 import model.GameState;
 import model.GameStatus;
 import model.Position;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -15,7 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseIntegrationTest {
 
-    private static final String URL = "jdbc:sqlite:resource/trivia.db";
+    private static final String URL = "jdbc:sqlite:resources/trivia.db";
+
+    @BeforeAll
+    static void initializeSchema() {
+        Schema.initialize();
+    }
 
     @Test
     void testDatabaseConnects() throws Exception {
@@ -42,12 +49,40 @@ public class DatabaseIntegrationTest {
         try (Connection con = DriverManager.getConnection(URL);
              Statement stat = con.createStatement();
              ResultSet result = stat.executeQuery(
-                     "SELECT text, answer, type FROM questions LIMIT 1")) {
+                     "SELECT text, answer, type, hint FROM questions LIMIT 1")) {
 
             assertTrue(result.next());
             assertNotNull(result.getString("text"));
             assertNotNull(result.getString("answer"));
             assertNotNull(result.getString("type"));
+            assertNotNull(result.getString("hint"));
+        }
+    }
+
+    @Test
+    void testQuestionsTableHasHintColumn() throws Exception {
+        try (Connection con = DriverManager.getConnection(URL);
+             Statement stat = con.createStatement();
+             ResultSet result = stat.executeQuery("PRAGMA table_info(questions)")) {
+
+            boolean found = false;
+            while (result.next()) {
+                found = found || "hint".equalsIgnoreCase(result.getString("name"));
+            }
+            assertTrue(found);
+        }
+    }
+
+    @Test
+    void testSeededQuestionsHaveHints() throws Exception {
+        try (Connection con = DriverManager.getConnection(URL);
+             Statement stat = con.createStatement();
+             ResultSet result = stat.executeQuery(
+                     "SELECT COUNT(*) AS missing FROM questions "
+                             + "WHERE hint IS NULL OR TRIM(hint) = ''")) {
+
+            assertTrue(result.next());
+            assertEquals(0, result.getInt("missing"));
         }
     }
 

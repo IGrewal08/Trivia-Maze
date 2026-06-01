@@ -34,7 +34,25 @@ public class TrueFalseQuestion extends Question {
      */
     public TrueFalseQuestion(final int theId, final String theQuestion,
                              final int theDifficulty, final String theAnswer) {
-        super(theId, theQuestion, theDifficulty);
+        this(theId, theQuestion, theDifficulty, theAnswer, null);
+    }
+
+    /**
+     * Creates a new TrueFalseQuestion with hint text.
+     *
+     * @param theId unique identifier for this question
+     * @param theQuestion prompt text shown to the player
+     * @param theDifficulty difficulty rating (must be non-negative)
+     * @param theAnswer the correct answer; accepts "true"/"false", "t"/"f",
+     *        "yes"/"no", "y"/"n" (case-insensitive, trimmed)
+     * @param theHint hint text shown to the player
+     * @throws IllegalArgumentException if theAnswer is null or cannot be
+     *         parsed as a boolean
+     */
+    public TrueFalseQuestion(final int theId, final String theQuestion,
+                             final int theDifficulty, final String theAnswer,
+                             final String theHint) {
+        super(theId, theQuestion, theDifficulty, theHint);
         final String canonical = parseFlexibleBoolean(theAnswer);
         if (canonical == null) {
             throw new IllegalArgumentException(

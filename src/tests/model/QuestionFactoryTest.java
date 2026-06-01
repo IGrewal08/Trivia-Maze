@@ -60,6 +60,8 @@ public class QuestionFactoryTest {
         assertEquals(1, q.getId());
         assertNotNull(q.getQuestionText());
         assertFalse(q.getQuestionText().isBlank());
+        assertNotNull(q.getHint());
+        assertFalse(q.getHint().isBlank());
         assertTrue(q.getDifficulty() >= 1 && q.getDifficulty() <= 3);
     }
 
@@ -75,6 +77,15 @@ public class QuestionFactoryTest {
 
         assertEquals(TOTAL_QUESTIONS, all.size());
         all.forEach(q -> assertNotNull(q.getQuestionText()));
+    }
+
+    @Test
+    void getAllQuestionsReturnsDatabaseHints() {
+        QuestionFactory.getAllQuestions().forEach(q -> {
+            assertNotNull(q.getHint());
+            assertFalse(q.getHint().isBlank());
+            assertFalse("No hint available for this question.".equals(q.getHint()));
+        });
     }
 
     @Test

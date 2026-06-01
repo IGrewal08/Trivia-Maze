@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
@@ -152,6 +153,8 @@ public class QuestionPanel extends JPanel {
         prompt.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(prompt);
         add(Box.createVerticalStrut(12));
+        add(buildHintButton());
+        add(Box.createVerticalStrut(10));
 
         myOptionButtons.clear();
 
@@ -259,6 +262,26 @@ public class QuestionPanel extends JPanel {
         skip.setAlignmentX(Component.LEFT_ALIGNMENT);
         skip.addActionListener(e -> submitAnswer(Question.SKIP));
         return skip;
+    }
+
+    /**
+     * Builds the one-use Hint button for the active question.
+     *
+     * @return the configured Hint button
+     */
+    private JButton buildHintButton() {
+        final JButton hint = new JButton("Hint");
+        UiTheme.styleButton(hint, false);
+        hint.setAlignmentX(Component.LEFT_ALIGNMENT);
+        hint.addActionListener(e -> {
+            if (myQuestion == null) {
+                return;
+            }
+            JOptionPane.showMessageDialog(this, myQuestion.getHint(),
+                    "Hint", JOptionPane.INFORMATION_MESSAGE);
+            hint.setEnabled(false);
+        });
+        return hint;
     }
 
     /**
