@@ -41,10 +41,10 @@ import model.Question;
 public class GuiView extends JFrame implements GameView {
 
     /** Default frame width in pixels. */
-    private static final int FRAME_WIDTH = 1200;
+    private static final int FRAME_WIDTH = 1260;
 
     /** Default frame height in pixels. */
-    private static final int FRAME_HEIGHT = 760;
+    private static final int FRAME_HEIGHT = 920;
 
     /** Status banner shown across the top of the frame. */
     private JLabel myStatusLabel;

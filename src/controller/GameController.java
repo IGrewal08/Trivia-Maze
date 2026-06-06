@@ -92,6 +92,7 @@ public class GameController {
 
     /**
      * Handles any of the players answers, true/false, multiple-choice, and short answer.
+     * Changes property through firePropertyChange to update model and view.
      * @param theAnswer the answer given from the player.
      */
     public void handleAnswer(final String theAnswer) {

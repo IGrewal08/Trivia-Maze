@@ -52,7 +52,7 @@ public class QuestionPanel extends JPanel {
     private static final int PANEL_WIDTH = 350;
 
     /** Preferred panel height in pixels. */
-    private static final int PANEL_HEIGHT = 250;
+    private static final int PANEL_HEIGHT = 300;
 
     /** Number of columns in the short-answer text field. */
     private static final int ANSWER_FIELD_COLUMNS = 20;

@@ -1,85 +1,143 @@
 package tests.model;
 
-import model.Room;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RoomTest {
+/**
+ * JUnit 5 test for Room
+ * 
+ * Tests the Rooms constructor for valid input and error catching, Door method for add/get/ and has
+ * checks and validates visited status of the door in this room, checks toString method for correct output.
+ * 
+ * @author Inderdeep Grewal
+ * @version 1.0
+ */
+class RoomTest {
 
-    // Inner Room Class
-    private static class TestRoom extends Room {
+    private Room myRoom;
+    private Door myDoor;
 
-        public TestRoom(int theX, int theY) {
-            super(theX, theY);
-        }
-        
+    public static Door makeDoor() {
+        return new Door(new ShortAnswerQuestion(1, "What is 2+2?", 1, "4"));
     }
-    private Room room;
 
     @BeforeEach
     void setUp() {
-        room = new Room(1, 2);
+        myRoom = new Room(2, 3);
+        myDoor = makeDoor();
+    }
+
+    // ~~~ Constructor ~~~
+
+    @Test
+    void constructor_validCoordinates_setsXAndY() {
+        assertEquals(2, myRoom.getX());
+        assertEquals(3, myRoom.getY());
     }
 
     @Test
-    void testConstructorSetsCoordinates() {
-        assertEquals(1, room.getX());
-        assertEquals(2, room.getY());
+    void constructor_newRoom_isNotVisited() {
+        assertFalse(myRoom.isVisited());
     }
 
     @Test
-    void testRoomStartsUnvisited() {
-        assertFalse(room.isVisited());
+    void constructor_newRoom_hasNoDoors() {
+        for (Direction dir : Direction.values()) {
+            assertFalse(myRoom.hasDoor(dir));
+        }
     }
 
     @Test
-    void testSetVisitedTrue() {
-        room.setVisited(true);
-        assertTrue(room.isVisited());
+    void constructor_negativeX_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Room(-1, 0));
     }
 
     @Test
-    void testSetVisitedFalse() {
-        room.setVisited(true);
-        room.setVisited(false);
-        assertFalse(room.isVisited());
+    void constructor_negativeY_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Room(0, -1));
     }
 
     @Test
-    void testConstructorRejectsNegativeX() {
-        assertThrows(IllegalArgumentException.class, () -> new Room(-1, 2));
+    void constructor_zeroCoordinates_isAllowed() {
+        assertDoesNotThrow(() -> new Room(0, 0));
+    }
+
+    // ~~~ addDoor/getDoor/hasDoor ~~~
+
+    @Test
+    void addDoor_validDirAndDoor_doorIsRetrievable() {
+        myRoom.addDoor(Direction.NORTH, myDoor);
+        assertSame(myDoor, myRoom.getDoor(Direction.NORTH));
     }
 
     @Test
-    void testConstructorRejectsNegativeY() {
-        assertThrows(IllegalArgumentException.class, () -> new Room(1, -2));
+    void addDoor_nullDirection_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> myRoom.addDoor(null, myDoor));
     }
 
     @Test
-    void testHasDoorRejectsNullDirection() {
-        assertThrows(IllegalArgumentException.class, () -> room.hasDoor(null));
+    void addDoor_nullDoor_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> myRoom.addDoor(Direction.NORTH, null));
     }
 
     @Test
-    void testGetDoorRejectsNullDirection() {
-        assertThrows(IllegalArgumentException.class, () -> room.getDoor(null));
+    void addDoor_overwriteExistingDirection_replacesOldDoor() {
+        Door anotherDoor = makeDoor();
+        myRoom.addDoor(Direction.NORTH, myDoor);
+        myRoom.addDoor(Direction.NORTH, anotherDoor);
+        assertSame(anotherDoor, myRoom.getDoor(Direction.NORTH));
     }
 
     @Test
-    void testAddDoorRejectsNullDirection() {
-        // TODO: replace null Door once Door constructor is confirmed
-        assertThrows(IllegalArgumentException.class, () -> room.addDoor(null, null));
+    void getDoor_directionWithNoDoor_returnsNull() {
+        assertNull(myRoom.getDoor(Direction.SOUTH));
     }
 
     @Test
-    void testToStringUpdatesVisitedState() {
+    void getDoor_nullDirection_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> myRoom.getDoor(null));
+    }
 
-        room.setVisited(true);
+    @Test
+    void hasDoor_afterAddingDoor_returnsTrue() {
+        myRoom.addDoor(Direction.EAST, myDoor);
+        assertTrue(myRoom.hasDoor(Direction.EAST));
+    }
 
-        String result = room.toString();
+    @Test
+    void hasDoor_directionWithNoDoor_returnsFalse() {
+        assertFalse(myRoom.hasDoor(Direction.WEST));
+    }
 
-        assertTrue(result.contains("visited=true"));
+    @Test
+    void hasDoor_nullDirection_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> myRoom.hasDoor(null));
+    }
+
+    // ~~~ setVisited/isVisited ~~~
+
+    @Test
+    void setVisited_true_roomBecomesVisited() {
+        myRoom.setVisited(true);
+        assertTrue(myRoom.isVisited());
+    }
+
+    @Test
+    void setVisited_falseAfterTrue_roomBecomesUnvisited() {
+        myRoom.setVisited(true);
+        myRoom.setVisited(false);
+        assertFalse(myRoom.isVisited());
+    }
+
+    // ~~~ toString ~~~
+
+    @Test
+    void toString_containsCoordinatesAndVisitedState() {
+        String result = myRoom.toString();
+        assertTrue(result.contains("X=2"));
+        assertTrue(result.contains("Y=3"));
+        assertTrue(result.contains("visited=false"));
     }
 }
