@@ -15,6 +15,14 @@ import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * JUnit 5 test for DatabaseManager
+ * 
+ * Tests question building, queries, and hint system for correctness.
+ * 
+ * @author Nicolas Cortes
+ * @version 1.0
+ */
 public class DatabaseIntegrationTest {
 
     private static final String URL = "jdbc:sqlite:resources/trivia.db";

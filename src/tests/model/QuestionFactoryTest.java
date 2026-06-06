@@ -14,11 +14,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+// java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-class=tests.model.QuestionFactoryTest
 
 /**
  * Integration tests for {@link QuestionFactory}. Boots the seeded SQLite
@@ -42,14 +45,20 @@ public class QuestionFactoryTest {
     private static final int PER_TYPE = TOTAL_QUESTIONS / 3;
 
     @BeforeAll
-    static void connect() {
-        Schema.initialize();
+    static void connect() {    
         DatabaseManager.connect();
+        Schema.initialize();
     }
 
     @AfterAll
     static void disconnect() {
         DatabaseManager.disconnect();
+    }
+
+    @Test
+    void debugConnection() {
+        assertDoesNotThrow(() -> DatabaseManager.connect());
+        assertNotNull(QuestionFactory.getAllQuestions());
     }
 
     @Test

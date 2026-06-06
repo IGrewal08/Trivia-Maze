@@ -24,6 +24,10 @@ public class DatabaseManager {
     /** Path to the SQLite database relative to project root. */
     private static final String DB_PATH = "jdbc:sqlite:resources/trivia.db";
 
+    /**
+     * Static block to run automatically when DatabaseManager is called to check 
+     * for required SQLite drivers before connecting to db.
+     */
     static {
         try {
             Class.forName("org.sqlite.JDBC");

@@ -12,22 +12,26 @@ Issues Encountered:
 - None.
 
 
-### Running Tests:
+### Running Individual Tests:
 (On windows swap `:` for `;`)
-#### Compile (with .jar files in lib):
-- javac -cp "lib/*:src" -d bin src/model/*.java src/tests/model/<TEST_NAME>.java
 #### Run:
-- java -jar lib/junit-platform-console-standalone-1.11.4.jar --class-path bin --select-class=tests.model.<TEST_NAME>
+- `java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-class=tests.<package>.<FileName>`
+    - Ex: `java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-class=tests.model.QuestionFactoryTest`
 
 ### For Controller:
-#### Compile:
 (On windows swap `:` for `;`)
-- javac -cp "lib/*:src" -d bin src/model/*.java src/controller/*.java src/view/*.java src/tests/controller/GameControllerTest.java
 #### Run:
-- java -jar lib/junit-platform-console-standalone-1.11.4.jar --class-path bin --select-class=tests.controller.GameControllerTest
+- `java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-package=tests.controller`
 
-#### Run All Tests
-java -jar lib/junit-platform-console-standalone-1.11.4.jar --class-path bin --select-package=tests
+### For Database:
+(On windows swap `:` for `;`)
+#### Run: 
+- `java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-package=tests.db`
+
+### Run All Tests
+(On windows swap `:` for `;`)
+- `java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-package=tests`
+
 
 
 
