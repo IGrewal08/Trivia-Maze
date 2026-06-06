@@ -44,12 +44,10 @@ public class GameControllerTest {
     private static class View implements GameView {
         String lastMessage = "";
         Question lastQuestion = null;
-        boolean closed = false;
-
         @Override public void initialize() {}
         @Override public void updateView() {}
         @Override public void setController(GameController c) {}
-        @Override public void closeGame() { closed = true; }
+        @Override public void closeGame() { }
         @Override public void propertyChange(PropertyChangeEvent e) {}
 
         @Override

@@ -11,6 +11,7 @@ Team members:
 Issues Encountered:
 - None.
 
+
 ### Running Tests:
 (On windows swap `:` for `;`)
 #### Compile (with .jar files in lib):
@@ -24,6 +25,9 @@ Issues Encountered:
 - javac -cp "lib/*:src" -d bin src/model/*.java src/controller/*.java src/view/*.java src/tests/controller/GameControllerTest.java
 #### Run:
 - java -jar lib/junit-platform-console-standalone-1.11.4.jar --class-path bin --select-class=tests.controller.GameControllerTest
+
+#### Run All Tests
+java -jar lib/junit-platform-console-standalone-1.11.4.jar --class-path bin --select-package=tests
 
 
 

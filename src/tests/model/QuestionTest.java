@@ -99,6 +99,7 @@ public class QuestionTest {
 
     // ~~~ Skips ~~~
 
+    @SuppressWarnings("unused")
     @Test
     void checkAnswer_skipSentinel_returnsFalse() {
         ConcreteQuestion q = new ConcreteQuestion(1, "Valid?", 1, Question.SKIP);
