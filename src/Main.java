@@ -8,6 +8,9 @@ import model.GameState;
 import view.GuiView;
 import view.UiTheme;
 
+/**
+ * 
+ */
 public class Main {
         public static void main(final String[] theArgs) {
         Schema.initialize();

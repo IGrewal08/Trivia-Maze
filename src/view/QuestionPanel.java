@@ -49,7 +49,7 @@ import model.Question;
  */
 public class QuestionPanel extends JPanel {
 
-        /** Preferred panel width in pixels. */
+    /** Preferred panel width in pixels. */
     private static final int PANEL_WIDTH = 350;
 
     /** Preferred panel height in pixels. */

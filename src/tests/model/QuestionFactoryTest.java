@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// java -cp "lib/junit-platform-console-standalone-1.11.4.jar:lib/sqlite-jdbc-3.47.1.0.jar:bin" org.junit.platform.console.ConsoleLauncher --select-class=tests.model.QuestionFactoryTest
-
 /**
  * Integration tests for {@link QuestionFactory}. Boots the seeded SQLite
  * database once before all tests and verifies that the factory builds the
