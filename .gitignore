@@ -30,3 +30,4 @@ replay_pid*
 
 # Saves
 /saves/*.save
+.DS_STORE
