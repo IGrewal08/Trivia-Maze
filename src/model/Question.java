@@ -19,7 +19,7 @@ public abstract class Question implements Serializable {
     /**
      * Sentinel value submitted as the answer when the player chooses to skip
      * a question rather than attempt it. Every subclass's
-     * {@link #checkAnswer(String)} treats this value as an incorrect answer.
+     * {@link #checkAnswer(String)} treats this value as a free pass.
      */
     public static final String SKIP = "__SKIP__";
 

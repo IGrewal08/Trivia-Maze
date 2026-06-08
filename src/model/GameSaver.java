@@ -25,8 +25,8 @@ public class GameSaver {
      */
     public static void saveGame(final GameState theState, final String theFileName) {
 
-        if (theFileName.equals("")) {
-            throw new IllegalArgumentException("Save file name must not be empty.");
+        if (!SaveFileValidator.isSafeSaveName(theFileName)) {
+            throw new IllegalArgumentException("Save file name is not valid.");
         }
         if (theState == null) {
             throw new IllegalArgumentException("GameState must not be null.");
@@ -42,13 +42,13 @@ public class GameSaver {
             }
         }
 
-        final String path = "saves" + File.separator + theFileName + ".save";
+        final File saveFile = SaveFileValidator.getDefaultSaveFile(theFileName);
 
-        try (FileOutputStream fileOut = new FileOutputStream(path);
+        try (FileOutputStream fileOut = new FileOutputStream(saveFile);
             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
 
                 out.writeObject(theState);
-                System.out.println("Serialized file to: " + path);
+                System.out.println("Serialized file to: " + saveFile.getPath());
 
             } catch (final IOException e) {
                 System.err.println("Failed to save game: " + e.getMessage());
@@ -64,22 +64,22 @@ public class GameSaver {
      */
     public static GameState getSave(final String theFileName) {
         
-        if (theFileName == null || theFileName.isBlank()) {
-            throw new IllegalArgumentException("Load file name must not be empty.");
+        if (!SaveFileValidator.isSafeSaveName(theFileName)) {
+            throw new IllegalArgumentException("Load file name is not valid.");
         }
 
-        final String path = "saves" + File.separator + theFileName + ".save";
+        final File saveFile = SaveFileValidator.getDefaultSaveFile(theFileName);
 
-        if (!new File(path).exists()) {
-            System.out.println("No save file found at: " + path);
+        if (!saveFile.exists()) {
+            System.out.println("No save file found at: " + saveFile.getPath());
             return null;
         }
 
-        try (FileInputStream fileIn = new FileInputStream(path);
+        try (FileInputStream fileIn = new FileInputStream(saveFile);
             ObjectInputStream in = new ObjectInputStream(fileIn)) {
 
                 final GameState fetchState =  (GameState) in.readObject();
-                System.out.println("Game loaded from: " + path);
+                System.out.println("Game loaded from: " + saveFile.getPath());
                 return fetchState;
 
         } catch (IOException e) {

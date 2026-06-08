@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Component;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -232,8 +233,15 @@ public class QuestionPanel extends JPanel {
     private void addShortAnswerWidgets() {
         myAnswerField.setText("");
         myAnswerField.setFont(UiTheme.BODY);
+        myAnswerField.setOpaque(true);
+        myAnswerField.setBackground(Color.WHITE);
+        myAnswerField.setForeground(UiTheme.TEXT);
+        myAnswerField.setCaretColor(UiTheme.TEXT);
+        myAnswerField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UiTheme.PRIMARY_DARK, 2, true),
+                BorderFactory.createEmptyBorder(6, 8, 6, 8)));
         myAnswerField.setMaximumSize(
-                new Dimension(Integer.MAX_VALUE, myAnswerField.getPreferredSize().height));
+                new Dimension(Integer.MAX_VALUE, myAnswerField.getPreferredSize().height + 10));
         myAnswerField.setAlignmentX(Component.LEFT_ALIGNMENT);
         // Submit on Enter for a smoother typing flow.
         for (final java.awt.event.ActionListener existing : myAnswerField.getActionListeners()) {
@@ -257,9 +265,11 @@ public class QuestionPanel extends JPanel {
      * @return the configured Skip button
      */
     private JButton buildSkipButton() {
-        final JButton skip = new JButton("Skip");
+        final int skipsRemaining = myController.getSkipsRemaining();
+        final JButton skip = new JButton("Skip (" + skipsRemaining + " left)");
         UiTheme.styleButton(skip, false);
         skip.setAlignmentX(Component.LEFT_ALIGNMENT);
+        skip.setEnabled(skipsRemaining > 0);
         skip.addActionListener(e -> submitAnswer(Question.SKIP));
         return skip;
     }

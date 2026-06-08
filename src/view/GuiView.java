@@ -258,6 +258,7 @@ public class GuiView extends JFrame implements GameView {
                 myQuestionPanel.showResult(correct);
                 myRoomPanel.refreshRoom();
                 myControlPanel.setKeyBindingsEnabled(this, true);
+                updateDirectionButtons();
                 refreshStats();
             }
 
@@ -306,8 +307,12 @@ public class GuiView extends JFrame implements GameView {
         final String name = JOptionPane.showInputDialog(this,
                 "Save name:", "Save Game", JOptionPane.QUESTION_MESSAGE);
         if (name != null && !name.isBlank()) {
-            myController.saveGame(name.trim());
-            showMessage("Game saved as \"" + name.trim() + "\".");
+            try {
+                myController.saveGame(name.trim());
+                showMessage("Game saved as \"" + name.trim() + "\".");
+            } catch (final IllegalArgumentException e) {
+                showMessage("Please enter a valid save name.");
+            }
         }
     }
 
@@ -318,13 +323,18 @@ public class GuiView extends JFrame implements GameView {
         final String name = JOptionPane.showInputDialog(this,
                 "Load name:", "Load Game", JOptionPane.QUESTION_MESSAGE);
         if (name != null && !name.isBlank()) {
-            myController.loadGame(name.trim());
-            myCorrectCount = 0;
-            myWrongCount = 0;
-            myControlPanel.setKeyBindingsEnabled(this, true);
-            myQuestionPanel.showIdleState();
-            refreshStats();
-            showMessage("Loaded \"" + name.trim() + "\".");
+            try {
+                if (myController.loadGame(name.trim())) {
+                    myCorrectCount = 0;
+                    myWrongCount = 0;
+                    myControlPanel.setKeyBindingsEnabled(this, true);
+                    updateDirectionButtons();
+                    myQuestionPanel.showIdleState();
+                    refreshStats();
+                }
+            } catch (final IllegalArgumentException e) {
+                showMessage("Please enter a valid save name.");
+            }
         }
     }
 
@@ -352,7 +362,7 @@ public class GuiView extends JFrame implements GameView {
         final JLabel rules = new JLabel("<html><div style='text-align:center;'>"
                 + "Move with <b>WASD</b> or the <b>arrow keys</b>, or click a door.<br>"
                 + "A locked door asks a question — answer it right to pass.<br>"
-                + "A wrong answer blocks that door for good. Reach <b>E</b> to win."
+                + "A wrong answer blocks that door for good. You get 3 skips. Reach <b>E</b> to win."
                 + "</div></html>");
         rules.setFont(UiTheme.BODY);
         rules.setForeground(UiTheme.TEXT);
@@ -387,7 +397,7 @@ public class GuiView extends JFrame implements GameView {
                 + "• Locked doors ('?') pose a trivia question.\n"
                 + "• Answer correctly to open the door (green) and pass through.\n"
                 + "• A wrong answer blocks the door ('X') permanently.\n"
-                + "• Use Skip sparingly — it grants a free pass.\n"
+                + "• You get 3 skips total; each skip grants a free pass.\n"
                 + "• Reach the exit (E) before every path is blocked.",
                 "How to Play", JOptionPane.INFORMATION_MESSAGE);
     }

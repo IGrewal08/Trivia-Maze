@@ -16,6 +16,9 @@ import java.util.Set;
  */
 public class GameState implements Serializable {
 
+    /** Number of free skips available in each new game. */
+    public static final int STARTING_SKIPS = 3;
+
     /** Current maze for the active game. */
     private Maze myMaze;
 
@@ -30,6 +33,9 @@ public class GameState implements Serializable {
 
     /** Current game status. */
     private GameStatus myStatus;
+
+    /** Remaining free question skips. */
+    private int mySkipsRemaining;
 
     /** Handles property change events for GUI updates. */
     private transient PropertyChangeSupport myPCS;
@@ -51,6 +57,7 @@ public class GameState implements Serializable {
         myVisitedRooms.add(myCurrentPosition);
 
         myStatus = GameStatus.ACTIVE;
+        mySkipsRemaining = STARTING_SKIPS;
 
         myPCS = new PropertyChangeSupport(this);
     }
@@ -139,6 +146,30 @@ public class GameState implements Serializable {
      */
     public GameStatus getStatus() {
         return myStatus;
+    }
+
+    /**
+     * Returns how many free skips the player has left.
+     *
+     * @return remaining skip count
+     */
+    public int getSkipsRemaining() {
+        return mySkipsRemaining;
+    }
+
+    /**
+     * Consumes one skip if any remain.
+     *
+     * @return true if a skip was consumed, false if none remain
+     */
+    public boolean useSkip() {
+        if (mySkipsRemaining <= 0) {
+            return false;
+        }
+        final int oldSkips = mySkipsRemaining;
+        mySkipsRemaining--;
+        firePropertyChange("SKIPS_REMAINING", oldSkips, mySkipsRemaining);
+        return true;
     }
 
     /**

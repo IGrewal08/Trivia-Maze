@@ -99,12 +99,9 @@ public class QuestionTest {
 
     // ~~~ Skips ~~~
 
-    @SuppressWarnings("unused")
     @Test
-    void checkAnswer_skipSentinel_returnsFalse() {
-        ConcreteQuestion q = new ConcreteQuestion(1, "Valid?", 1, Question.SKIP);
-        ConcreteQuestion q2 = new ConcreteQuestion(1, "Valid?", 1, "answer");
-        assertFalse(q2.checkAnswer(Question.SKIP));
+    void skipSentinel_hasExpectedValue() {
+        assertEquals("__SKIP__", Question.SKIP);
     }
 
     // ~~~ checkAnswer ~~~

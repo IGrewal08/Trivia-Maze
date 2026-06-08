@@ -33,6 +33,7 @@ public class GameStateTest {
         assertEquals(new Position(0, 0), state.getCurrentPosition());
         assertEquals(Direction.NORTH, state.getCurrentDirection());
         assertEquals(GameStatus.ACTIVE, state.getStatus());
+        assertEquals(GameState.STARTING_SKIPS, state.getSkipsRemaining());
         assertTrue(state.getVisitedRooms().contains(new Position(0, 0)));
     }
 
@@ -82,6 +83,27 @@ public class GameStateTest {
         state.setStatus(GameStatus.ACTIVE);
 
         assertEquals(GameStatus.ACTIVE, state.getStatus());
+    }
+
+    @Test
+    void testUseSkipConsumesOneSkip() {
+        GameState state = new GameState(8, 8);
+
+        assertTrue(state.useSkip());
+
+        assertEquals(GameState.STARTING_SKIPS - 1, state.getSkipsRemaining());
+    }
+
+    @Test
+    void testUseSkipReturnsFalseWhenNoSkipsRemain() {
+        GameState state = new GameState(8, 8);
+
+        for (int i = 0; i < GameState.STARTING_SKIPS; i++) {
+            assertTrue(state.useSkip());
+        }
+
+        assertFalse(state.useSkip());
+        assertEquals(0, state.getSkipsRemaining());
     }
 
     @Test

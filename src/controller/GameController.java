@@ -77,6 +77,7 @@ public class GameController {
             myView.showMessage("Moved " + theDir + " to " + newPos);
             myState.firePropertyChange("PLAYER_MOVED", null, newPos);
             if (newPos.equals(myState.getMaze().getExit())) {
+                myState.setStatus(GameStatus.WON);
                 myState.firePropertyChange("GAME_OVER", null, GameStatus.WON);
             }
         } else if (door.isLocked()) {
@@ -99,6 +100,10 @@ public class GameController {
         if (theAnswer == null || theAnswer.isBlank()) {
             throw new IllegalArgumentException("Player answer must not be blank or null.");
         }
+        if (Question.SKIP.equals(theAnswer) && !myState.useSkip()) {
+            myView.showMessage("No skips remaining.");
+            return;
+        }
         Direction dir = myState.getCurrentDirection();
         Position currPos = myState.getCurrentPosition();
         Position newPos = myState.getCurrentPosition().translate(dir);
@@ -109,6 +114,7 @@ public class GameController {
             door.unlock();
             myState.setCurrentPosition(newPos);
             if (newPos.equals(getMaze().getExit())) {
+                myState.setStatus(GameStatus.WON);
                 myState.firePropertyChange("GAME_OVER", null, GameStatus.WON);
                 return;
             }
@@ -122,6 +128,7 @@ public class GameController {
         }
 
         if (!myState.getMaze().isPathPossible(myState.getCurrentPosition())) {
+            myState.setStatus(GameStatus.LOST);
             myState.firePropertyChange("GAME_OVER", null, GameStatus.LOST); // TODO build Stats ENUM for game update per event
         }
         
@@ -164,6 +171,15 @@ public class GameController {
     }
 
     /**
+     * Returns the number of free skips remaining in the current game.
+     *
+     * @return remaining skip count
+     */
+    public int getSkipsRemaining() {
+        return myState.getSkipsRemaining();
+    }
+
+    /**
      * Creates a new game by re-initializing the GameModel and GameView and building a
      * custom matrix for the Trivia Maze.
      * @param theWidth the new width of the matrix for the Maze.
@@ -196,8 +212,8 @@ public class GameController {
      * @param theFileName name for the save file for this current iteration of the game.
      */
     public void saveGame(final String theFileName) {
-        if (theFileName.isBlank()) {
-            throw new IllegalArgumentException("Save file name must not be empty.");
+        if (!SaveFileValidator.isSafeSaveName(theFileName)) {
+            throw new IllegalArgumentException("Save file name is not valid.");
         }
         GameSaver.saveGame(myState, theFileName);
     }
@@ -206,15 +222,20 @@ public class GameController {
      * Load and deserialize data for a saved game file to rebuild any progress the player made.
      * @param theFileName name to search for the saved file to be loaded from.
      */
-    public void loadGame(final String theFileName) {
-        if (theFileName == null || theFileName.isBlank()) {
-            throw new IllegalArgumentException("Load file name must not be empty.");
+    public boolean loadGame(final String theFileName) {
+        if (!SaveFileValidator.isSafeSaveName(theFileName)) {
+            throw new IllegalArgumentException("Load file name is not valid.");
         }
         GameState loaded = GameSaver.getSave(theFileName);
         if (loaded != null) {
             myState = loaded;
             myState.addPropertyChangeListener(myView);
             myState.firePropertyChange("MAZE_UPDATED", null, myState.getMaze());
+            myView.showMessage("Loaded \"" + theFileName.trim() + "\".");
+            return true;
+        } else {
+            myView.showMessage("No save file found for \"" + theFileName.trim() + "\".");
+            return false;
         }
     }
 
@@ -235,6 +256,9 @@ public class GameController {
      * @return true if the player can attempt to move that direction
      */
     public boolean isDirectionAvailable(final Direction theDir) {
+        if (theDir == null) {
+            throw new IllegalArgumentException("Direction must not be null.");
+        }
         Room currentRoom = myState.getMaze().getRoom(myState.getCurrentPosition());
         Door door = currentRoom.getDoor(theDir);
         return door != null && !door.isBlocked();

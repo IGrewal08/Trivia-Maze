@@ -129,6 +129,11 @@ public class GameControllerTest {
         assertTrue(myController.getVisitedRooms().contains(new Position(0, 0)));
     }
 
+    @Test
+    void getSkipsRemaining_atStart_returnsThree() {
+        assertEquals(3, myController.getSkipsRemaining());
+    }
+
     // ~~~ handleMove ~~~
     @Test
     void handleMove_nullDirection_throwsIllegalArgumentException() {
@@ -204,6 +209,39 @@ public class GameControllerTest {
     }
 
     @Test
+    void handleAnswer_skip_consumesOneSkipAndMoves() {
+        myController.handleMove(Direction.EAST);
+        myController.handleAnswer(Question.SKIP);
+        assertEquals(new Position(1, 0), myController.getCurrentPosition());
+        assertEquals(2, myController.getSkipsRemaining());
+    }
+
+    @Test
+    void handleAnswer_noSkipsRemaining_doesNotMove() {
+        myController.handleMove(Direction.EAST);
+        myController.handleAnswer(Question.SKIP);
+        myController.handleMove(Direction.SOUTH);
+        myController.handleAnswer(Question.SKIP);
+        myController.handleMove(Direction.WEST);
+        myController.handleAnswer(Question.SKIP);
+        myController.handleMove(Direction.NORTH);
+        myController.handleAnswer(Question.SKIP);
+
+        assertEquals(new Position(0, 1), myController.getCurrentPosition());
+        assertEquals(0, myController.getSkipsRemaining());
+        assertEquals("No skips remaining.", myView.lastMessage);
+    }
+
+    @Test
+    void handleAnswer_correctAnswerAtExit_setsStatusWon() {
+        myController.handleMove(Direction.EAST);
+        myController.handleAnswer("4");
+        myController.handleMove(Direction.SOUTH);
+        myController.handleAnswer("4");
+        assertEquals(model.GameStatus.WON, myState.getStatus());
+    }
+
+    @Test
     void handleAnswer_wrongAnswer_positionDoesNotChange() {
         myController.handleMove(Direction.EAST);
         myController.handleAnswer("wrong");
@@ -216,6 +254,15 @@ public class GameControllerTest {
         myController.handleAnswer("wrong");
         Door door = myState.getMaze().getRoom(new Position(0, 0)).getDoor(Direction.EAST);
         assertTrue(door.isBlocked());
+    }
+
+    @Test
+    void handleAnswer_noRemainingPath_setsStatusLost() {
+        myController.handleMove(Direction.EAST);
+        myController.handleAnswer("wrong");
+        myController.handleMove(Direction.SOUTH);
+        myController.handleAnswer("wrong");
+        assertEquals(model.GameStatus.LOST, myState.getStatus());
     }
 
     // ~~~ isDirectionAvailable ~~~
@@ -244,11 +291,18 @@ public class GameControllerTest {
             () -> myController.newGame(-1, 4));
     }
 
+
     // ~~~ saveGame ~~~
     @Test
     void saveGame_blankFileName_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
             () -> myController.saveGame("   "));
+    }
+
+    @Test
+    void saveGame_pathSeparator_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class,
+            () -> myController.saveGame("../slot1"));
     }
 
     // ~~~ loadGame ~~~
@@ -262,5 +316,10 @@ public class GameControllerTest {
     void loadGame_blankFileName_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
             () -> myController.loadGame("   "));
+    }
+
+    @Test
+    void loadGame_missingFile_returnsFalse() {
+        assertFalse(myController.loadGame("definitely_missing_save"));
     }
 }
