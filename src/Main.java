@@ -13,8 +13,8 @@ import view.UiTheme;
  */
 public class Main {
         public static void main(final String[] theArgs) {
-        Schema.initialize();
         DatabaseManager.connect();
+        Schema.initialize();
         Runtime.getRuntime().addShutdownHook(new Thread(DatabaseManager::disconnect));
 
         applyTheme();

@@ -39,15 +39,22 @@ public class DatabaseManager {
     }
 
     /**
-     * Opens a JDBC connection to the SQLite database at path.
+     * Opens a JDBC connection to the SQLite database at path. 
+     * Creates resource file if one doesn't exist.
      * @throws SQLException if a connection cannot be established.
      */
     public static void connect() {
         try {
+            java.nio.file.Files.createDirectories(
+                java.nio.file.Paths.get("resources")
+            );
             CONNECT = DriverManager.getConnection(DB_PATH);
             System.out.println("QuestionFactory connected to: " + DB_PATH);
         } catch (SQLException e) {
             System.err.println("Error trying to establish a connection: " + e.getMessage());
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            System.err.println("Failed to create resources directory: " + e.getMessage());
             e.printStackTrace();
         }
     }
